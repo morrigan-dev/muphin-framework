@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+	<Appenders>
+		<List name="List" />
+	</Appenders>
+	<Loggers>
+		<Logger name="de.morrigan.dev" level="INFO" additivity="false">
+			<AppenderRef ref="List" />
+		</Logger>
+
+		<Root level="OFF">
+			<AppenderRef ref="List" />
+		</Root>
+	</Loggers>
+</Configuration> 

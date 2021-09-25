@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>de.morrigan.dev.common</groupId>
+		<artifactId>parent-pom</artifactId>
+		<version>1.0.11-SNAPSHOT</version>
+	</parent>
+
+	<groupId>de.morrigan.dev.muphit</groupId>
+	<artifactId>muphit-build</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>muphit (build)</name>
+	<description>Build module of the muphit framework</description>
+
+	<modules>
+		<module>muphit-core</module>
+	</modules>
+
+	<scm>
+		<developerConnection>scm:git:https://github.com/morrigan-dev/muphit-framework.git</developerConnection>
+		<url>https://github.com/morrigan-dev/muphit-framework</url>
+		<tag>HEAD</tag>
+	</scm>
+
+	<properties>
+		<!-- Für sonarcloud benötigte Properties -->
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.organization>morrigan-dev</sonar.organization>
+		<sonar.projectKey>morrigan-dev_muphit-framework</sonar.projectKey>
+		<!-- Solution for a StackOverflowError problem (see: https://community.sonarsource.com/t/stackoverflowerror-at-defaultinputcomponent-equals/20324) -->
+		<sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+		</dependencies>
+	</dependencyManagement>
+</project>

@@ -1,0 +1,83 @@
+# Quality build-job
+#
+# Täglich in der Nacht oder bei manuellem Anstoß wird der aktuelle Stand mittels sonarcloud
+# analysiert und ein Bericht erstellt. Eine Analyse wird nur dann durchgeführt, wenn es in
+# den letzten 24h auch eine Änderung am Sourcecode gegeben hat.
+#
+# Voraussetzungen:
+# - Sonar Properties sind in der pom.xml vorhanden
+#
+# Dieser Job wird manuell oder einmal täglich in der Nacht angestoßen.
+
+name: Run quality build-job
+on: 
+  schedule:
+    - cron:  '0 1 * * *'
+  workflow_dispatch:
+jobs:
+
+  # Ermittelt den letzten Commit Zeitstempel, um die Anzahl der Tage zu berechnen, die seit
+  # dem letzten Commit vergangen sind. Das Ergebnis wird in der Umgebungsvariable LAST_COMMIT
+  # abgelegt und kann vom Folge Job ausgewertet werden.
+  get-last-commit:
+
+    name: Get days since last commit
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: |
+          curl -sL https://api.github.com/repos/$GITHUB_REPOSITORY/commits | jq -r '[.[]][0]' > $HOME/commit.json
+          date="$(jq -r '.commit.author.date' $HOME/commit.json)"
+          timestamp=$(date --utc -d "$date" +%s)
+          days=$(( ( $(date --utc +%s) - $timestamp ) / 86400 ))
+          export LAST_COMMIT=$days
+          echo "days since last commit:" $days
+          echo "LAST_COMMIT=${days}" >> $GITHUB_ENV
+          echo $LAST_COMMIT
+    
+  # Stößt eine Analyse des Sourcecodes auf der sonarcloud.io Plattform an.
+  build-quality:
+
+    name: Quality build-job
+    needs: get-last-commit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+        if: env.LAST_COMMIT == 0
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Set up JDK 11
+        if: env.LAST_COMMIT == 0
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Cache SonarCloud packages
+        if: env.LAST_COMMIT == 0
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache Maven packages
+        if: env.LAST_COMMIT == 0
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Setup Maven settings.xml
+        uses: whelk-io/maven-settings-xml-action@v11
+        with:
+          servers: '[{ "id": "releases-repo", "username": "${{ secrets.ARTIFACTORY_USERNAME }}", "password": "${{ secrets.ARTIFACTORY_TOKEN }}" }, { "id": "snapshots-repo", "username": "${{ secrets.ARTIFACTORY_USERNAME }}", "password": "${{ secrets.ARTIFACTORY_TOKEN }}" }]'
+          repositories: '[{ "id": "releases-repo", "name": "morrigan-libs-release-local", "url": "https://morrigan.jfrog.io/artifactory/morrigan-libs-release-local/", "releases.enabled": "true", "snapshots.enabled": "false" }, { "id": "snapshots-repo", "name": "morrigan-libs-snapshot-local", "url": "https://morrigan.jfrog.io/artifactory/morrigan-libs-snapshot-local/", "releases.enabled": "false", "snapshots.enabled": "true" }]'
+      - name: Build and analyze
+        if: env.LAST_COMMIT == 0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+      - name: No analyse necessary
+        if: env.LAST_COMMIT > 0
+        run: echo "There was no commit since the last" $LAST_COMMIT "days. No analyse necessary."

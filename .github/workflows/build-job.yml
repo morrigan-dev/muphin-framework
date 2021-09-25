@@ -1,0 +1,41 @@
+# SNAPSHOT build workflow
+# 
+# Bei jeder Änderung auf einem beliebigen branch wird ein SNAPSHOT maven build angestoßen,
+# der die aktuelle Änderung compiliert und das resultierende SNAPSHOT Artefakt deployt,
+# sofern in der pom.xml ein Plugin für das Deployment des Artefakts hiterlegt ist.
+#
+# Voraussetzungen:
+# - Nutzung des artifactory-maven-plugin Plugins
+# - Benutzer des Artifactories in den Secrets unter ARTIFACTORY_USERNAME hinterlegt
+# - Token des Benutzers des Artifactories in den Secrets unter ARTIFACTORY_TOKEN hinterlegt
+#
+# Dieser Job wird bei jeder Änderung angestoßen
+
+name: Run snapshot build-job
+
+on:
+  push:
+    branches: [ "**" ]
+
+jobs:
+  build-snapshot:
+
+    name: SNAPSHOT build-job
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Setup Maven settings.xml
+        uses: whelk-io/maven-settings-xml-action@v11
+        with:
+          servers: '[{ "id": "releases-repo", "username": "${{ secrets.ARTIFACTORY_USERNAME }}", "password": "${{ secrets.ARTIFACTORY_TOKEN }}" }, { "id": "snapshots-repo", "username": "${{ secrets.ARTIFACTORY_USERNAME }}", "password": "${{ secrets.ARTIFACTORY_TOKEN }}" }]'
+          repositories: '[{ "id": "releases-repo", "name": "morrigan-libs-release-local", "url": "https://morrigan.jfrog.io/artifactory/morrigan-libs-release-local/", "releases.enabled": "true", "snapshots.enabled": "false" }, { "id": "snapshots-repo", "name": "morrigan-libs-snapshot-local", "url": "https://morrigan.jfrog.io/artifactory/morrigan-libs-snapshot-local/", "releases.enabled": "false", "snapshots.enabled": "true" }]'
+      - name: Build with Maven
+        env:
+          ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
+          ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
+        run: mvn -B deploy --file pom.xml
