@@ -10,10 +10,10 @@ import de.morrigan.dev.muphit.core.phase.SetupPhase;
 import de.morrigan.dev.muphit.core.phase.TearDownPhase;
 
 @WorkflowTest(WorkflowA.class)
-public class TestClassA {
+public class TestClassA2 {
 
   /** Logger für Debug/Fehlerausgaben */
-  private static final Logger LOG = LoggerFactory.getLogger(TestClassA.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TestClassA2.class);
 
   @Test
   @Phase(beforePhase = SetupPhase.class)

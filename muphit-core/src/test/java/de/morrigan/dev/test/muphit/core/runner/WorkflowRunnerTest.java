@@ -14,8 +14,8 @@ public class WorkflowRunnerTest {
 
   @Test
   public void testConstructor() {
-    WorkflowRunner workflowRunner = new WorkflowRunner("de.morrigan.dev.test.muphit.helper");
-    LOG.info("{}", workflowRunner.getTestClassesByWorkflow());
+    WorkflowRunner workflowRunner = new WorkflowRunner(WorkflowRunnerTest.class, "de.morrigan.dev.test.muphit.helper");
+    //    LOG.info("{}", workflowRunner.getTestClassesByWorkflow());
     RunNotifier notifier = new RunNotifier();
     workflowRunner.run(notifier);
   }

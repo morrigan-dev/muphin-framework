@@ -23,8 +23,14 @@ public class TestClassB {
 
   @Test
   @Phase(afterPhase = SetupPhase.class)
-  public void testWorkflowBAfterSetupPhase() {
-    LOG.info("Workflow B after phase Setup");
+  public void testWorkflowBAfterSetupPhase1() {
+    LOG.info("Workflow B after phase Setup 1");
+  }
+
+  @Test
+  @Phase(afterPhase = SetupPhase.class)
+  public void testWorkflowBAfterSetupPhase2() {
+    LOG.info("Workflow B after phase Setup 2");
   }
 
   @Test
