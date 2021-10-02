@@ -1,6 +1,7 @@
 package de.morrigan.dev.test.muphit.helper;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,11 +9,12 @@ import de.morrigan.dev.muphit.core.annotation.Phase;
 import de.morrigan.dev.muphit.core.annotation.WorkflowTest;
 import de.morrigan.dev.muphit.core.phase.SetupPhase;
 import de.morrigan.dev.muphit.core.phase.TearDownPhase;
+import de.morrigan.dev.muphit.core.runner.WorkflowRunner;
 
+@RunWith(WorkflowRunner.class)
 @WorkflowTest(WorkflowB.class)
 public class TestClassB {
 
-  /** Logger für Debug/Fehlerausgaben */
   private static final Logger LOG = LoggerFactory.getLogger(TestClassB.class);
 
   @Test
