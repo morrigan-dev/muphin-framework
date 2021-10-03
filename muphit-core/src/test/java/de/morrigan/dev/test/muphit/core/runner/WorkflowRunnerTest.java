@@ -21,16 +21,12 @@ import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.TestClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.morrigan.dev.muphit.core.runner.WorkflowRunner;
 import de.morrigan.dev.test.muphit.helper.MuphitTestSuite;
 import de.morrigan.dev.test.muphit.helper.TestClassA1;
 
 public class WorkflowRunnerTest {
-
-  private static final Logger LOG = LoggerFactory.getLogger(WorkflowRunnerTest.class);
 
   private WorkflowRunner sut;
 

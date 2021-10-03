@@ -17,4 +17,9 @@ public class SetupPhase extends AbstractPhase<String> {
   public SetupPhase() {
     super(NAME, "");
   }
+
+  @Override
+  protected boolean execute(String data) {
+    return true;
+  }
 }

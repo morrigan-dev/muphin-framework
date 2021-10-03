@@ -15,8 +15,17 @@
 			<PatternLayout pattern="%d %-5p %t %C{1.}.%M(%L) %m%n" />
 
 		</Console>
+		<Console name="TESTOUT" target="SYSTEM_OUT">
+
+			<!-- https://stackoverflow.com/questions/34446722/is-it-possible-for-using-different-pattern-layout-for-different-log-level-and-ou -->
+			<PatternLayout pattern="[%p] %m%n" />
+
+		</Console>
 	</Appenders>
 	<Loggers>
+		<Logger name="de.morrigan.dev.muphit.core.runner.WorkflowRunner" level="INFO" additivity="false">
+			<AppenderRef ref="TESTOUT" />
+		</Logger>
 		<Logger name="de.morrigan.dev" level="INFO" additivity="false">
 			<AppenderRef ref="FileLogger" />
 			<AppenderRef ref="STDOUT" />

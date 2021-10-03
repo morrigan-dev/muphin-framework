@@ -33,4 +33,21 @@ public abstract class AbstractPhase<T> {
   public T getData() {
     return this.data;
   }
+
+  /**
+   * Executes the action that belongs to this phase.
+   *
+   * @return {@code true} if the action was executed successful, otherwise {@code false}.
+   */
+  public boolean execute() {
+    return execute(this.data);
+  }
+
+  /**
+   * Executes the action that belongs to this phase. Has to be implemented by all subclasses.
+   *
+   * @param data data that are needed to execute the action
+   * @return {@code true} if the action was executed successful, otherwise {@code false}.
+   */
+  protected abstract boolean execute(T data);
 }

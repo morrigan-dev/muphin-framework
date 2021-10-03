@@ -17,4 +17,9 @@ public class TearDownPhase extends AbstractPhase<String> {
   public TearDownPhase() {
     super(NAME, "");
   }
+
+  @Override
+  protected boolean execute(String data) {
+    return true;
+  }
 }

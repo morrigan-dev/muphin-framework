@@ -15,4 +15,9 @@ public class NoPhase extends AbstractPhase<String> {
   public NoPhase() {
     super(NAME, "");
   }
+
+  @Override
+  protected boolean execute(String data) {
+    return true;
+  }
 }

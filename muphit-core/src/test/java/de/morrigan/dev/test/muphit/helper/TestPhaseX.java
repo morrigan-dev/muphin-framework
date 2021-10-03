@@ -5,18 +5,18 @@ import org.slf4j.LoggerFactory;
 
 import de.morrigan.dev.muphit.core.phase.AbstractPhase;
 
-public class TestPhaseA extends AbstractPhase<String> {
+public class TestPhaseX extends AbstractPhase<String> {
 
   /** Logger für Debug/Fehlerausgaben */
-  private static final Logger LOG = LoggerFactory.getLogger(TestPhaseA.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TestPhaseX.class);
 
-  public TestPhaseA() {
-    super("Phase A", "");
+  public TestPhaseX(String data) {
+    super("Phase X", data);
   }
 
   @Override
   public boolean execute(String data) {
-    LOG.info("execute action from phase A");
+    LOG.info("execute action from phase X");
     return true;
   }
 }

@@ -28,6 +28,7 @@ import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.Suite;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
@@ -36,6 +37,7 @@ import org.reflections.ReflectionsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.morrigan.dev.muphit.core.InstanceManager;
 import de.morrigan.dev.muphit.core.annotation.Phase;
 import de.morrigan.dev.muphit.core.annotation.WorkflowTest;
 import de.morrigan.dev.muphit.core.phase.AbstractPhase;
@@ -44,6 +46,43 @@ import de.morrigan.dev.muphit.core.phase.SetupPhase;
 import de.morrigan.dev.muphit.core.phase.TearDownPhase;
 import de.morrigan.dev.muphit.core.workflow.AbstractWorkflow;
 
+/**
+ * Implements the muphit standard test case runner that executes all test methods in the correct workflow and phases
+ * order.
+ * <p>
+ * You can use this runner in different ways.
+ * <p>
+ * <b>Suite variant</b><br>
+ * Use the runner on an empty test class analogous to a {@linkplain Suite}. If no concrete workflow classes are
+ * specified, all test classes on the classpath that have an {@link WorkflowTest} annotation are used for a test.
+ *
+ * <pre>
+ * &#64;RunWith(WorkflowRunner.class)
+ * public class MyTestSuite {
+ *
+ * }
+ * </pre>
+ * <p>
+ * <b>Filtered variant</b><br>
+ * Use the runner on a test class, to run only this test class or a single test method from this test class. In this
+ * variant, the complete workflow of the test class is run through, but only the filtered test methods are called.
+ *
+ * <pre>
+ * &#64;RunWith(WorkflowRunner.class)
+ * &#64;WorkflowTest(WorkflowA.class)
+ * public class TestClassA {
+ *
+ *   &#64;Test
+ *   &#64;Phase(beforePhase = SetupPhase.class)
+ *   public void testWorkflowABeforeSetupPhase() {
+ *     // any test here ...
+ *   }
+ * }
+ * </pre>
+ *
+ * @author morrigan
+ * @since 0.0.1
+ */
 public class WorkflowRunner extends Runner implements Filterable {
 
   private interface Callback {
@@ -60,21 +99,19 @@ public class WorkflowRunner extends Runner implements Filterable {
 
   private static final Logger LOG = LoggerFactory.getLogger(WorkflowRunner.class);
 
+  private static final InstanceManager INSTANCES = InstanceManager.getInstance();
+
   private final Lock childrenLock = new ReentrantLock();
   private TestClass testClass;
 
   // Guarded by childrenLock
   private Map<String, Map<String, List<FrameworkMethod>>> filteredChildren;
-  private Map<Class<? extends AbstractWorkflow>, AbstractWorkflow> workflowCache;
-  private Map<Class<? extends AbstractPhase<?>>, AbstractPhase<?>> phaseCache;
 
   private final ConcurrentMap<FrameworkMethod, Description> methodDescriptions = new ConcurrentHashMap<>();
 
   public WorkflowRunner(Class<?> testClass) {
     super();
 
-    this.workflowCache = new HashMap<>();
-    this.phaseCache = new HashMap<>();
     this.testClass = new TestClass(testClass);
   }
 
@@ -85,6 +122,10 @@ public class WorkflowRunner extends Runner implements Filterable {
     return this.testClass;
   }
 
+  /**
+   * @return a {@link Description} showing the tests to be run by the receiver
+   * @since 0.0.1
+   */
   @Override
   public Description getDescription() {
     Class<?> clazz = getTestClass().getJavaClass();
@@ -123,29 +164,53 @@ public class WorkflowRunner extends Runner implements Filterable {
     return description;
   }
 
+  /**
+   * Iterates through all workflows, executes the actions of the phases and runs all tests before and after each phase.
+   *
+   * @param notifier will be notified of events while tests are being run--tests being started, finishing, and failing
+   * @since 0.0.1
+   */
   @Override
   public void run(RunNotifier notifier) {
     iterateThroughChildren(getFilteredChildren(), new Callback() {
 
       @Override
+      public void workflow(AbstractWorkflow workflow) {
+        printWorkflowHeader(workflow);
+      }
+
+      @Override
+      public void phase(AbstractPhase<?> phase) {
+        printPhaseHeader(phase);
+      }
+
+      @Override
       public void runPhase(AbstractWorkflow workflow, AbstractPhase<?> phase) {
-        LOG.info("Run phase: {}", phase.getName());
+        LOG.info("Execute all actions of the current phase");
+        phase.execute();
       }
 
       @Override
       public void runBeforePhase(FrameworkMethod method, Iterator<FrameworkMethod> iter) {
-        LOG.info("run test before phase: {}", method);
+        LOG.info("Run before test: {}", method);
         runChild(method, notifier);
       }
 
       @Override
       public void runAfterPhase(FrameworkMethod method, Iterator<FrameworkMethod> iter) {
-        LOG.info("run test after phase: {}", method);
+        LOG.info("Run after test: {}", method);
         runChild(method, notifier);
       }
     });
   }
 
+  /**
+   * Remove tests that don't pass the parameter filter.
+   *
+   * @param filter the Filter to apply
+   * @throws NoTestsRemainException if all tests are filtered out
+   * @since 0.0.1
+   */
   @Override
   public void filter(Filter filter) throws NoTestsRemainException {
     this.childrenLock.lock();
@@ -184,6 +249,13 @@ public class WorkflowRunner extends Runner implements Filterable {
     }
   }
 
+  /**
+   * Describes the given test method.
+   *
+   * @param method a test method
+   * @return a description
+   * @since 0.0.1
+   */
   protected Description describeChild(FrameworkMethod method) {
     Description description = this.methodDescriptions.get(method);
 
@@ -198,9 +270,13 @@ public class WorkflowRunner extends Runner implements Filterable {
 
   /**
    * Runs a {@link Statement} that represents a leaf (aka atomic) test.
+   *
+   * @param statement a statement to evaluate
+   * @param description a description
+   * @param notifier a notifier of this test run
+   * @since 0.0.1
    */
-  protected final void runLeaf(Statement statement, Description description,
-      RunNotifier notifier) {
+  protected final void runLeaf(Statement statement, Description description, RunNotifier notifier) {
     EachTestNotifier eachNotifier = new EachTestNotifier(notifier, description);
     eachNotifier.fireTestStarted();
     try {
@@ -214,6 +290,13 @@ public class WorkflowRunner extends Runner implements Filterable {
     }
   }
 
+  /**
+   * Runs a test method.
+   *
+   * @param method a test method to execute
+   * @param notifier a notifier of this test run
+   * @since 0.0.1
+   */
   protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
     Description description = describeChild(method);
     if (isIgnored(method)) {
@@ -232,6 +315,9 @@ public class WorkflowRunner extends Runner implements Filterable {
   /**
    * Returns a new fixture for running a test. Default implementation executes the test class's no-argument constructor
    * (validation should have ensured one exists).
+   *
+   * @param method a test methode to execute
+   * @since 0.0.1
    */
   protected Object createTest(FrameworkMethod method) throws Exception {
     return method.getDeclaringClass().getConstructor().newInstance();
@@ -255,6 +341,10 @@ public class WorkflowRunner extends Runner implements Filterable {
 
   /**
    * Returns a {@link Statement} that invokes {@code method} on {@code test}
+   *
+   * @param method a test method to execute
+   * @param test a class to that the test method belongs
+   * @since 0.0.1
    */
   protected Statement methodInvoker(FrameworkMethod method, Object test) {
     return new InvokeMethod(method, test);
@@ -262,9 +352,12 @@ public class WorkflowRunner extends Runner implements Filterable {
 
   /**
    * Evaluates whether {@link FrameworkMethod}s are ignored based on the {@link Ignore} annotation.
+   *
+   * @param method a test method to check
+   * @since 0.0.1
    */
-  protected boolean isIgnored(FrameworkMethod child) {
-    return child.getAnnotation(Ignore.class) != null;
+  protected boolean isIgnored(FrameworkMethod method) {
+    return method.getAnnotation(Ignore.class) != null;
   }
 
   private List<FrameworkMethod> getFrameworkMethods(Map<String, Map<String, List<FrameworkMethod>>> children) {
@@ -285,7 +378,11 @@ public class WorkflowRunner extends Runner implements Filterable {
   }
 
   private void iterateThroughChildren(Map<String, Map<String, List<FrameworkMethod>>> children, Callback callback) {
-    for (AbstractWorkflow workflow : getWorkflows()) {
+    /*
+     * Reduces complexity for several methods that iterates through the filteredChildren. This methods only have to
+     * implement the needed callback methods.
+     */
+    for (AbstractWorkflow workflow : INSTANCES.getWorkflows()) {
       callback.workflow(workflow);
       List<AbstractPhase<?>> phases = getPhases(workflow);
       for (AbstractPhase<?> phase : phases) {
@@ -358,7 +455,7 @@ public class WorkflowRunner extends Runner implements Filterable {
      */
     for (Class<?> workflowTestClass : workflowTestClasses) {
       WorkflowTest annotation = workflowTestClass.getAnnotation(WorkflowTest.class);
-      AbstractWorkflow workflow = getWorkflow(annotation.value());
+      AbstractWorkflow workflow = INSTANCES.getWorkflow(annotation.value());
       children.compute(workflow.getName(), (key, value) -> {
         if (value == null) {
           value = new HashMap<>();
@@ -383,7 +480,7 @@ public class WorkflowRunner extends Runner implements Filterable {
   private void computePhases(Map<String, List<FrameworkMethod>> value, Method method,
       Phase annotation, boolean before) {
     Class<? extends AbstractPhase<?>> phaseClass = before ? annotation.beforePhase() : annotation.afterPhase();
-    AbstractPhase<?> phase = getPhase(phaseClass);
+    AbstractPhase<?> phase = INSTANCES.getPhase(phaseClass);
     if (!ignorePhase(phase)) {
       String phaseKey = before ? beforePhaseKey(phase) : afterPhaseKey(phase);
       value.compute(phaseKey, (key, methodsOfPhase) -> {
@@ -400,62 +497,12 @@ public class WorkflowRunner extends Runner implements Filterable {
     return phaseClass instanceof NoPhase;
   }
 
-  private List<AbstractWorkflow> getWorkflows() {
-    this.childrenLock.lock();
-    List<AbstractWorkflow> workflows = new ArrayList<>();
-    try {
-      this.workflowCache.forEach((workflowClass, workflow) -> workflows.add(workflow));
-      Collections.sort(workflows, (w1, w2) -> w1.getName().compareTo(w2.getName()));
-    } finally {
-      this.childrenLock.unlock();
-    }
-    return workflows;
-  }
-
   private List<AbstractPhase<?>> getPhases(AbstractWorkflow workflow) {
     List<AbstractPhase<?>> phases = new ArrayList<>();
-    phases.add(getPhase(SetupPhase.class));
+    phases.add(INSTANCES.getPhase(SetupPhase.class));
     phases.addAll(workflow.getPhases());
-    phases.add(getPhase(TearDownPhase.class));
+    phases.add(INSTANCES.getPhase(TearDownPhase.class));
     return phases;
-  }
-
-  private AbstractWorkflow getWorkflow(Class<? extends AbstractWorkflow> workflowClass) {
-    this.childrenLock.lock();
-    try {
-      return this.workflowCache.compute(workflowClass, (key, value) -> {
-        if (value == null) {
-          try {
-            value = workflowClass.newInstance();
-          } catch (InstantiationException | IllegalAccessException e) {
-            throw new IllegalArgumentException(StringUtils.join("Can't create a new instance from ", workflowClass,
-                ". Please make sure a default constructor exists."), e);
-          }
-        }
-        return value;
-      });
-    } finally {
-      this.childrenLock.unlock();
-    }
-  }
-
-  private AbstractPhase<?> getPhase(Class<? extends AbstractPhase<?>> phaseClass) {
-    this.childrenLock.lock();
-    try {
-      return this.phaseCache.compute(phaseClass, (phaseKey, phase) -> {
-        if (phase == null) {
-          try {
-            phase = phaseClass.newInstance();
-          } catch (InstantiationException | IllegalAccessException e) {
-            throw new IllegalArgumentException(StringUtils.join("Can't create a new instance from ", phaseClass,
-                ". Please make sure a default constructor exists."), e);
-          }
-        }
-        return phase;
-      });
-    } finally {
-      this.childrenLock.unlock();
-    }
   }
 
   private boolean shouldRun(Filter filter, FrameworkMethod each) {
@@ -468,5 +515,20 @@ public class WorkflowRunner extends Runner implements Filterable {
 
   private String afterPhaseKey(AbstractPhase<?> phase) {
     return StringUtils.join("after ", phase.getName());
+  }
+
+  private void printWorkflowHeader(AbstractWorkflow workflow) {
+    String line = StringUtils.rightPad("", workflow.getName().length() + 23, "#");
+    LOG.info("");
+    LOG.info("{}", line);
+    LOG.info("#   Run Workflow '{}'   #", workflow.getName());
+    LOG.info("{}", line);
+  }
+
+  private void printPhaseHeader(AbstractPhase<?> phase) {
+    String line = StringUtils.rightPad("", phase.getName().length() + 20, "-");
+    LOG.info("{}", line);
+    LOG.info("|   Run Phase '{}'   |", phase.getName());
+    LOG.info("{}", line);
   }
 }

@@ -3,6 +3,7 @@ package de.morrigan.dev.muphit.core.workflow;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.morrigan.dev.muphit.core.InstanceManager;
 import de.morrigan.dev.muphit.core.phase.AbstractPhase;
 
 /**
@@ -16,21 +17,23 @@ import de.morrigan.dev.muphit.core.phase.AbstractPhase;
  */
 public abstract class AbstractWorkflow {
 
+  private static final InstanceManager INSTANCES = InstanceManager.getInstance();
+
   private final String name;
-  private final List<AbstractPhase<?>> phases;
+  private final List<Class<? extends AbstractPhase<?>>> phaseClasses;
 
   /**
    * Create a new workflow.
    *
    * @param name a unique name of this workflow
-   * @param phases a collection of phases that belongs to this workflow
+   * @param phaseClasses a collection of phases that belongs to this workflow
    * @since 0.0.1
    */
-  protected AbstractWorkflow(String name, List<AbstractPhase<?>> phases) {
+  protected AbstractWorkflow(String name, List<Class<? extends AbstractPhase<?>>> phaseClasses) {
     super();
 
     this.name = name;
-    this.phases = new ArrayList<>(phases);
+    this.phaseClasses = new ArrayList<>(phaseClasses);
   }
 
   /**
@@ -46,6 +49,10 @@ public abstract class AbstractWorkflow {
    * @since 0.0.1
    */
   public List<AbstractPhase<?>> getPhases() {
-    return new ArrayList<>(this.phases);
+    List<AbstractPhase<?>> phaseInstances = new ArrayList<>();
+    for (Class<? extends AbstractPhase<?>> phaseClass : this.phaseClasses) {
+      phaseInstances.add(INSTANCES.getPhase(phaseClass));
+    }
+    return phaseInstances;
   }
 }
