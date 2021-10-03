@@ -1,10 +1,10 @@
 package de.morrigan.dev.test.muphin.helper;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.morrigan.dev.muphin.core.annotation.Phase;
 import de.morrigan.dev.muphin.core.annotation.WorkflowTest;
@@ -16,66 +16,64 @@ import de.morrigan.dev.muphin.core.runner.WorkflowRunner;
 @WorkflowTest(WorkflowB.class)
 public class TestClassB {
 
-  private static final Logger LOG = LoggerFactory.getLogger(TestClassB.class);
-
   @Test
-  @Ignore
+  @Ignore("just for testing the @Ignore annotation")
   @Phase(beforePhase = SetupPhase.class)
   public void testWorkflowBBeforeSetupPhaseIgnored() {
-    //    LOG.info("Workflow B before phase Setup ignored");
+    assertTrue(true);
   }
 
   @Test
   @Phase(beforePhase = SetupPhase.class)
   public void testWorkflowBBeforeSetupPhase() {
-    //    LOG.info("Workflow B before phase Setup");
+    assertTrue(true);
   }
 
   @Test
   @Phase(afterPhase = SetupPhase.class)
   public void testWorkflowBAfterSetupPhase1() {
-    //    LOG.info("Workflow B after phase Setup 1");
+    assertTrue(true);
   }
 
   @Test
   @Phase(afterPhase = SetupPhase.class)
   public void testWorkflowBAfterSetupPhase2() {
-    //    LOG.info("Workflow B after phase Setup 2");
+    assertTrue(true);
   }
 
   @Test
   @Phase(beforePhase = TearDownPhase.class)
   public void testWorkflowBBeforeTearDownPhase() {
-    //    LOG.info("Workflow B before phase TearDown");
+    assertTrue(true);
   }
 
   @Test
   @Phase(afterPhase = TearDownPhase.class)
   public void testWorkflowBAfterTearDownPhase() {
-    //    LOG.info("Workflow B after phase TearDown");
+    assertTrue(true);
   }
 
   @Test
   @Phase(beforePhase = TestPhaseA.class)
   public void testWorkflowBBeforeTestPhaseA() {
-    //    LOG.info("Workflow B before phase TestPhaseA");
+    assertTrue(true);
   }
 
   @Test
   @Phase(afterPhase = TestPhaseA.class)
   public void testWorkflowBAfterTestPhaseA() {
-    //    LOG.info("Workflow B after phase TestPhaseA");
+    assertTrue(true);
   }
 
   @Test
   @Phase(beforePhase = TestPhaseC.class)
   public void testWorkflowBBeforeTestPhaseC() {
-    //    LOG.info("Workflow B before phase TestPhaseC");
+    assertTrue(true);
   }
 
   @Test
   @Phase(afterPhase = TestPhaseC.class)
   public void testWorkflowBAfterTestPhaseC() {
-    //    LOG.info("Workflow B after phase TestPhaseC");
+    assertTrue(true);
   }
 }

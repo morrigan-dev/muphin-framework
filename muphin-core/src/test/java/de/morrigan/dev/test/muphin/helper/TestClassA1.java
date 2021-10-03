@@ -1,9 +1,9 @@
 package de.morrigan.dev.test.muphin.helper;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.morrigan.dev.muphin.core.annotation.Phase;
 import de.morrigan.dev.muphin.core.annotation.WorkflowTest;
@@ -15,53 +15,51 @@ import de.morrigan.dev.muphin.core.runner.WorkflowRunner;
 @WorkflowTest(WorkflowA.class)
 public class TestClassA1 {
 
-  private static final Logger LOG = LoggerFactory.getLogger(TestClassA1.class);
-
   @Test
   @Phase(beforePhase = SetupPhase.class)
   public void testTC1WorkflowABeforeSetupPhase() {
-    //    LOG.info("Workflow A before phase Setup");
+    assertTrue(true);
   }
 
   @Test
   @Phase(afterPhase = SetupPhase.class)
   public void testTC1WorkflowAAfterSetupPhase() {
-    //    LOG.info("Workflow A after phase Setup");
+    assertTrue(true);
   }
 
   @Test
   @Phase(beforePhase = TearDownPhase.class)
   public void testTC1WorkflowABeforeTearDownPhase() {
-    //    LOG.info("Workflow A before phase TearDown");
+    assertTrue(true);
   }
 
   @Test
   @Phase(afterPhase = TearDownPhase.class)
   public void testTC1WorkflowAAfterTearDownPhase() {
-    //    LOG.info("Workflow A after phase TearDown");
+    assertTrue(true);
   }
 
   @Test
   @Phase(beforePhase = TestPhaseA.class)
   public void testTC1WorkflowABeforeTestPhaseA() {
-    //    LOG.info("Workflow A before phase TestPhaseA");
+    assertTrue(true);
   }
 
   @Test
   @Phase(afterPhase = TestPhaseA.class)
   public void testTC1WorkflowAAfterTestPhaseA() {
-    //    LOG.info("Workflow A after phase TestPhaseA");
+    assertTrue(true);
   }
 
   @Test
   @Phase(beforePhase = TestPhaseB.class)
   public void testTC1WorkflowABeforeTestPhaseB() {
-    //    LOG.info("Workflow A before phase TestPhaseB");
+    assertTrue(true);
   }
 
   @Test
   @Phase(afterPhase = TestPhaseB.class)
   public void testTC1WorkflowAAfterTestPhaseB() {
-    //    LOG.info("Workflow A after phase TestPhaseB");
+    assertTrue(true);
   }
 }
