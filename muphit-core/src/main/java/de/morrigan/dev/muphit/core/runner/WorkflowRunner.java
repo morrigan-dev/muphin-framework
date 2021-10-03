@@ -176,7 +176,7 @@ public class WorkflowRunner extends Runner implements Filterable {
         }
       });
       this.filteredChildren = Collections.unmodifiableMap(children);
-      if (this.filteredChildren.isEmpty()) {
+      if (getFrameworkMethods(this.filteredChildren).isEmpty()) {
         throw new NoTestsRemainException();
       }
     } finally {
@@ -267,28 +267,51 @@ public class WorkflowRunner extends Runner implements Filterable {
     return child.getAnnotation(Ignore.class) != null;
   }
 
+  private List<FrameworkMethod> getFrameworkMethods(Map<String, Map<String, List<FrameworkMethod>>> children) {
+    List<FrameworkMethod> frameworkMethods = new ArrayList<>();
+    iterateThroughChildren(children, new Callback() {
+
+      @Override
+      public void runBeforePhase(FrameworkMethod method, Iterator<FrameworkMethod> iter) {
+        frameworkMethods.add(method);
+      }
+
+      @Override
+      public void runAfterPhase(FrameworkMethod method, Iterator<FrameworkMethod> iter) {
+        frameworkMethods.add(method);
+      }
+    });
+    return frameworkMethods;
+  }
+
   private void iterateThroughChildren(Map<String, Map<String, List<FrameworkMethod>>> children, Callback callback) {
     for (AbstractWorkflow workflow : getWorkflows()) {
       callback.workflow(workflow);
       List<AbstractPhase<?>> phases = getPhases(workflow);
       for (AbstractPhase<?> phase : phases) {
         callback.phase(phase);
-        Map<String, List<FrameworkMethod>> childrenOfWorkflow = children.get(workflow.getName());
-        if (childrenOfWorkflow != null) {
-          List<FrameworkMethod> beforePhaseMethods = childrenOfWorkflow.get(beforePhaseKey(phase));
-          for (Iterator<FrameworkMethod> iter = beforePhaseMethods.iterator(); iter.hasNext();) {
+        Map<String, List<FrameworkMethod>> workflowChildren = children.get(workflow.getName());
+        if (workflowChildren != null) {
+          for (Iterator<FrameworkMethod> iter = getIterator(workflowChildren, beforePhaseKey(phase)); iter.hasNext();) {
             FrameworkMethod testMethod = iter.next();
             callback.runBeforePhase(testMethod, iter);
           }
           callback.runPhase(workflow, phase);
-          List<FrameworkMethod> afterPhaseMethods = childrenOfWorkflow.get(afterPhaseKey(phase));
-          for (Iterator<FrameworkMethod> iter = afterPhaseMethods.iterator(); iter.hasNext();) {
+          for (Iterator<FrameworkMethod> iter = getIterator(workflowChildren, afterPhaseKey(phase)); iter.hasNext();) {
             FrameworkMethod testMethod = iter.next();
             callback.runAfterPhase(testMethod, iter);
           }
         }
       }
     }
+  }
+
+  private Iterator<FrameworkMethod> getIterator(Map<String, List<FrameworkMethod>> childrenOfWorkflow, String key) {
+    List<FrameworkMethod> methods = childrenOfWorkflow.get(key);
+    if (methods == null) {
+      methods = new ArrayList<>();
+    }
+    return methods.iterator();
   }
 
   private Map<String, Map<String, List<FrameworkMethod>>> getFilteredChildren() {

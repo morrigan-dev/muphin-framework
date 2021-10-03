@@ -1,5 +1,6 @@
 package de.morrigan.dev.test.muphit.helper;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -16,6 +17,13 @@ import de.morrigan.dev.muphit.core.runner.WorkflowRunner;
 public class TestClassB {
 
   private static final Logger LOG = LoggerFactory.getLogger(TestClassB.class);
+
+  @Test
+  @Ignore
+  @Phase(beforePhase = SetupPhase.class)
+  public void testWorkflowBBeforeSetupPhaseIgnored() {
+    LOG.info("Workflow B before phase Setup ignored");
+  }
 
   @Test
   @Phase(beforePhase = SetupPhase.class)
