@@ -1,17 +1,17 @@
 <p align="center">
- <img src="https://raw.githubusercontent.com/morrigan-dev/muphit-framework/main/images/muphit-framework.png">
+ <img src="https://raw.githubusercontent.com/morrigan-dev/muphin-framework/main/images/muphin-framework.png">
 </p>
 
 <p align="center">
-    <a href="https://github.com/morrigan-dev/muphit-framework/actions/workflows/build-job.yml" title="Build Job"><img src="https://img.shields.io/github/workflow/status/morrigan-dev/muphit-framework/Run%20snapshot%20build-job?logo=GitHub"></a>
-    <a href="https://github.com/morrigan-dev/muphit-framework/actions/workflows/quality-job.yml" title="Quality Job"><img src="https://img.shields.io/github/workflow/status/morrigan-dev/muphit-framework/Run%20quality%20build-job?label=quality-build&logo=GitHub"></a>
-    <a href="https://github.com/morrigan-dev/muphit-framework/blob/main/LICENSE" title="License"><img src="https://img.shields.io/github/license/morrigan-dev/muphit-framework?logo=GitHub"></a>
-    <a href="https://github.com/morrigan-dev/muphit-framework" title="Last Commit"><img src="https://img.shields.io/github/last-commit/morrigan-dev/muphit-framework?logo=GitHub"></a>
+    <a href="https://github.com/morrigan-dev/muphin-framework/actions/workflows/build-job.yml" title="Build Job"><img src="https://img.shields.io/github/workflow/status/morrigan-dev/muphin-framework/Run%20snapshot%20build-job?logo=GitHub"></a>
+    <a href="https://github.com/morrigan-dev/muphin-framework/actions/workflows/quality-job.yml" title="Quality Job"><img src="https://img.shields.io/github/workflow/status/morrigan-dev/muphin-framework/Run%20quality%20build-job?label=quality-build&logo=GitHub"></a>
+    <a href="https://github.com/morrigan-dev/muphin-framework/blob/main/LICENSE" title="License"><img src="https://img.shields.io/github/license/morrigan-dev/muphin-framework?logo=GitHub"></a>
+    <a href="https://github.com/morrigan-dev/muphin-framework" title="Last Commit"><img src="https://img.shields.io/github/last-commit/morrigan-dev/muphin-framework?logo=GitHub"></a>
 	<br>    
-    <a href="https://sonarcloud.io/dashboard?id=morrigan-dev_muphit-framework" title="Quality Gate"><img src="https://img.shields.io/sonar/quality_gate/morrigan-dev_muphit-framework?logo=SonarCloud&server=https%3A%2F%2Fsonarcloud.io"></a>
-    <a href="https://sonarcloud.io/dashboard?id=morrigan-dev_muphit-framework" title="Successful tests"><img src="https://img.shields.io/sonar/test_success_density/morrigan-dev_muphit-framework?logo=SonarCloud&server=https%3A%2F%2Fsonarcloud.io"></a>
-    <a href="https://sonarcloud.io/dashboard?id=morrigan-dev_muphit-framework" title="Coverage"><img src="https://img.shields.io/sonar/coverage/morrigan-dev_muphit-framework?logo=SonarCloud&server=https%3A%2F%2Fsonarcloud.io"></a>
-    <a href="https://sonarcloud.io/dashboard?id=morrigan-dev_muphit-framework" title="Lines of code"><img src="https://sonarcloud.io/api/project_badges/measure?project=morrigan-dev_muphit-framework&metric=ncloc"></a>
+    <a href="https://sonarcloud.io/dashboard?id=morrigan-dev_muphin-framework" title="Quality Gate"><img src="https://img.shields.io/sonar/quality_gate/morrigan-dev_muphin-framework?logo=SonarCloud&server=https%3A%2F%2Fsonarcloud.io"></a>
+    <a href="https://sonarcloud.io/dashboard?id=morrigan-dev_muphin-framework" title="Successful tests"><img src="https://img.shields.io/sonar/test_success_density/morrigan-dev_muphin-framework?logo=SonarCloud&server=https%3A%2F%2Fsonarcloud.io"></a>
+    <a href="https://sonarcloud.io/dashboard?id=morrigan-dev_muphin-framework" title="Coverage"><img src="https://img.shields.io/sonar/coverage/morrigan-dev_muphin-framework?logo=SonarCloud&server=https%3A%2F%2Fsonarcloud.io"></a>
+    <a href="https://sonarcloud.io/dashboard?id=morrigan-dev_muphin-framework" title="Lines of code"><img src="https://sonarcloud.io/api/project_badges/measure?project=morrigan-dev_muphin-framework&metric=ncloc"></a>
 </p>
 
 <hr />

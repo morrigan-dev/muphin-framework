@@ -8,21 +8,21 @@
 		<version>1.0.11-SNAPSHOT</version>
 	</parent>
 
-	<groupId>de.morrigan.dev.muphit</groupId>
-	<artifactId>muphit-build</artifactId>
+	<groupId>de.morrigan.dev.muphin</groupId>
+	<artifactId>muphin-build</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>muphit (build)</name>
-	<description>Build module of the muphit framework</description>
+	<name>muphin (build)</name>
+	<description>Build module of the muphin framework</description>
 
 	<modules>
-		<module>muphit-core</module>
+		<module>muphin-core</module>
 	</modules>
 
 	<scm>
-		<developerConnection>scm:git:https://github.com/morrigan-dev/muphit-framework.git</developerConnection>
-		<url>https://github.com/morrigan-dev/muphit-framework</url>
+		<developerConnection>scm:git:https://github.com/morrigan-dev/muphin-framework.git</developerConnection>
+		<url>https://github.com/morrigan-dev/muphin-framework</url>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -30,7 +30,7 @@
 		<!-- Für sonarcloud benötigte Properties -->
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.organization>morrigan-dev</sonar.organization>
-		<sonar.projectKey>morrigan-dev_muphit-framework</sonar.projectKey>
+		<sonar.projectKey>morrigan-dev_muphin-framework</sonar.projectKey>
 		<!-- Solution for a StackOverflowError problem (see: https://community.sonarsource.com/t/stackoverflowerror-at-defaultinputcomponent-equals/20324) -->
 		<sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
 	</properties>

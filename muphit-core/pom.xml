@@ -3,16 +3,16 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>de.morrigan.dev.muphit</groupId>
-		<artifactId>muphit-build</artifactId>
+		<groupId>de.morrigan.dev.muphin</groupId>
+		<artifactId>muphin-build</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>muphit-core</artifactId>
+	<artifactId>muphin-core</artifactId>
 	<packaging>jar</packaging>
 
-	<name>muphit - Core module</name>
-	<description>Core module of the muphit framework</description>
+	<name>muphin - Core module</name>
+	<description>Core module of the muphin framework</description>
 
 	<properties>
 	</properties>
