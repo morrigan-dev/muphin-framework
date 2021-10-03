@@ -30,6 +30,10 @@
 			<AppenderRef ref="FileLogger" />
 			<AppenderRef ref="STDOUT" />
 		</Logger>
+		<Logger name="de.morrigan.dev.test" level="INFO" additivity="false">
+			<AppenderRef ref="FileLogger" />
+			<AppenderRef ref="STDOUT" />
+		</Logger>
 
 		<Root level="WARN">
 			<AppenderRef ref="FileLogger" />
