@@ -8,16 +8,14 @@ import de.morrigan.dev.muphin.core.annotation.Phase;
  * @author morrigan
  * @since 0.0.1
  */
-public class NoPhase extends AbstractPhase<String> {
+public class NoPhase extends AbstractPhase {
 
-  public static final String NAME = "No phase";
+   public NoPhase() {
+      super(AbstractPhase.INTERNAL_KIND, NoPhase.class.getSimpleName());
+   }
 
-  public NoPhase() {
-    super(NAME, "");
-  }
-
-  @Override
-  protected boolean execute(String data) {
-    return true;
-  }
+   @Override
+   public boolean execute() {
+      return true;
+   }
 }

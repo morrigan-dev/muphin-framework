@@ -11,43 +11,33 @@ package de.morrigan.dev.muphin.core.phase;
  * by the muphin-framework!
  *
  * @author morrigan
- * @param <T>
  * @since 0.0.1
  */
-public abstract class AbstractPhase<T> {
+public abstract class AbstractPhase {
 
-  private final String name;
-  private final T data;
+   public static final String INTERNAL_KIND = "InternalPhase";
 
-  protected AbstractPhase(String name, T data) {
-    super();
+   private final String kind;
+   private final String name;
 
-    this.name = name;
-    this.data = data;
-  }
+   protected AbstractPhase(String kind, String name) {
+      super();
+      this.kind = kind;
+      this.name = name;
+   }
 
-  public String getName() {
-    return this.name;
-  }
+   public String getKind() {
+      return this.kind;
+   }
 
-  public T getData() {
-    return this.data;
-  }
+   public String getName() {
+      return this.name;
+   }
 
-  /**
-   * Executes the action that belongs to this phase.
-   *
-   * @return {@code true} if the action was executed successful, otherwise {@code false}.
-   */
-  public boolean execute() {
-    return execute(this.data);
-  }
-
-  /**
-   * Executes the action that belongs to this phase. Has to be implemented by all subclasses.
-   *
-   * @param data data that are needed to execute the action
-   * @return {@code true} if the action was executed successful, otherwise {@code false}.
-   */
-  protected abstract boolean execute(T data);
+   /**
+    * Executes the action that belongs to this phase. Has to be implemented by all subclasses.
+    *
+    * @return {@code true} if the action was executed successful, otherwise {@code false}.
+    */
+   public abstract boolean execute();
 }

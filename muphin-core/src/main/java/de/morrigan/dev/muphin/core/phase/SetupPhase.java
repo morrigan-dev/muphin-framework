@@ -10,16 +10,14 @@ package de.morrigan.dev.muphin.core.phase;
  * @author morrigan
  * @since 0.0.1
  */
-public class SetupPhase extends AbstractPhase<String> {
+public class SetupPhase extends AbstractPhase {
 
-  public static final String NAME = "Setup phase";
+   public SetupPhase() {
+      super(AbstractPhase.INTERNAL_KIND, SetupPhase.class.getSimpleName());
+   }
 
-  public SetupPhase() {
-    super(NAME, "");
-  }
-
-  @Override
-  protected boolean execute(String data) {
-    return true;
-  }
+   @Override
+   public boolean execute() {
+      return true;
+   }
 }

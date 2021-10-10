@@ -14,47 +14,55 @@ import de.morrigan.dev.muphin.core.phase.AbstractPhase;
 
 public class AbstractPhaseTest {
 
-  private static final String NAME = "Test Phase";
-  private static final String DATA = "data";
+   private static final String KIND = "Test";
+   private static final String NAME = "Test Phase";
+   private static final String DATA = "data";
 
-  private interface ExecutionListener {
-    void executed(String data);
-  }
+   private interface ExecutionListener {
+      void executed(String data);
+   }
 
-  private class TestPhase extends AbstractPhase<String> {
+   private class TestPhase extends AbstractPhase {
 
-    private ExecutionListener listener;
+      private ExecutionListener listener;
+      private String data;
 
-    protected TestPhase() {
-      super(NAME, DATA);
-    }
-
-    protected TestPhase(ExecutionListener listener) {
-      this();
-      this.listener = listener;
-    }
-
-    @Override
-    public boolean execute(String data) {
-      if (this.listener != null) {
-        this.listener.executed(data);
+      protected TestPhase() {
+         super(KIND, NAME);
+         this.data = DATA;
       }
-      return true;
-    }
-  }
 
-  @Test
-  public void testConstruction() {
-    TestPhase sut = new TestPhase();
-    assertThat(sut.getName(), is(equalTo(NAME)));
-    assertThat(sut.getData(), is(equalTo(DATA)));
-  }
+      protected TestPhase(ExecutionListener listener) {
+         this();
+         this.listener = listener;
+      }
 
-  @Test
-  public void testExecute() {
-    final List<String> executedData = new ArrayList<>();
-    TestPhase sut = new TestPhase(data -> executedData.add(data));
-    sut.execute();
-    assertThat(executedData, contains(DATA));
-  }
+      public String getData() {
+         return this.data;
+      }
+
+      @Override
+      public boolean execute() {
+         if (this.listener != null) {
+            this.listener.executed(DATA);
+         }
+         return true;
+      }
+   }
+
+   @Test
+   public void testConstruction() {
+      TestPhase sut = new TestPhase();
+      assertThat(sut.getKind(), is(equalTo(KIND)));
+      assertThat(sut.getName(), is(equalTo(NAME)));
+      assertThat(sut.getData(), is(equalTo(DATA)));
+   }
+
+   @Test
+   public void testExecute() {
+      final List<String> executedData = new ArrayList<>();
+      TestPhase sut = new TestPhase(data -> executedData.add(data));
+      sut.execute();
+      assertThat(executedData, contains(DATA));
+   }
 }

@@ -7,7 +7,7 @@ import de.morrigan.dev.muphin.core.workflow.AbstractWorkflow;
 
 public class WorkflowX extends AbstractWorkflow {
 
-  public WorkflowX(List<Class<? extends AbstractPhase<?>>> phases) {
-    super("Workflow X", phases);
-  }
+   public WorkflowX(List<Class<? extends AbstractPhase>> phases) {
+      super("Workflow X", phases);
+   }
 }

@@ -21,7 +21,7 @@ import de.morrigan.dev.muphin.core.phase.NoPhase;
  * &#64;Test
  * &#64;Phase(beforePhase = MyCustomPhase.class)
  * public void testMyWorkflowBeforeMyCustomPhase() {
- *   // implement your tests here ...
+ *    // implement your tests here ...
  * }
  * </pre>
  *
@@ -29,22 +29,22 @@ import de.morrigan.dev.muphin.core.phase.NoPhase;
  * @since 0.0.1
  */
 @Target({
-    ElementType.METHOD
+         ElementType.METHOD
 })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Phase {
 
-  /**
-   * @return a phase to which this test method is previously executed
-   *
-   * @since 0.0.01
-   */
-  Class<? extends AbstractPhase<?>> beforePhase() default NoPhase.class;
+   /**
+    * @return a phase to which this test method is previously executed
+    *
+    * @since 0.0.01
+    */
+   Class<? extends AbstractPhase> beforePhase() default NoPhase.class;
 
-  /**
-   * @return a phase to which this test method is executed afterwards
-   *
-   * @since 0.0.1
-   */
-  Class<? extends AbstractPhase<?>> afterPhase() default NoPhase.class;
+   /**
+    * @return a phase to which this test method is executed afterwards
+    *
+    * @since 0.0.1
+    */
+   Class<? extends AbstractPhase> afterPhase() default NoPhase.class;
 }

@@ -10,16 +10,14 @@ package de.morrigan.dev.muphin.core.phase;
  * @author morrigan
  * @since 0.0.1
  */
-public class TearDownPhase extends AbstractPhase<String> {
+public class TearDownPhase extends AbstractPhase {
 
-  public static final String NAME = "Tear down phase";
+   public TearDownPhase() {
+      super(AbstractPhase.INTERNAL_KIND, TearDownPhase.class.getSimpleName());
+   }
 
-  public TearDownPhase() {
-    super(NAME, "");
-  }
-
-  @Override
-  protected boolean execute(String data) {
-    return true;
-  }
+   @Override
+   public boolean execute() {
+      return true;
+   }
 }
