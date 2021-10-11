@@ -1,6 +1,7 @@
 package de.morrigan.dev.muphin.core;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.helpers.MessageFormatter;
@@ -8,6 +9,8 @@ import org.slf4j.helpers.MessageFormatter;
 import de.morrigan.dev.muphin.core.workflow.AbstractWorkflow;
 
 public class MuphinSession {
+
+   public static final String CMD_SESSION = "cmdSession";
 
    private static final MuphinSession INSTANCE = new MuphinSession();
 
@@ -27,20 +30,23 @@ public class MuphinSession {
       this.dataCache.put(key, data);
    }
 
-   public Object getData(String key) {
-      return this.dataCache.get(key);
+   public void remove(String key) {
+      this.dataCache.remove(key);
    }
 
    @SuppressWarnings("unchecked")
-   public <T> T getData(String key, Class<T> type) {
+   public <T> Optional<T> getData(String key, Class<T> type) {
       Object data = this.dataCache.get(key);
-      if (data != null && data.getClass().isAssignableFrom(type)) {
-         return (T) data;
-      } else {
-         String msg = MessageFormatter.arrayFormat("Type of data with the key {} does not match with the expected type {}",
-                  new Object[] { key, type }).getMessage();
-         throw new IllegalStateException(msg);
+      if (data != null) {
+         if (data.getClass().isAssignableFrom(type)) {
+            return Optional.of((T) data);
+         } else {
+            String msg = MessageFormatter.arrayFormat("Type of data with the key {} does not match with the expected type {}",
+                     new Object[] { key, type }).getMessage();
+            throw new IllegalStateException(msg);
+         }
       }
+      return Optional.empty();
    }
 
    public AbstractWorkflow getCurrentWorkflow() {

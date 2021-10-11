@@ -3,6 +3,7 @@ package de.morrigan.dev.muphin.core.tasks;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Optional;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.morrigan.dev.muphin.core.MuphinSession;
 import de.morrigan.dev.muphin.core.exception.MuphinFailureException;
 
 public class CmdTask extends Task {
@@ -93,6 +95,7 @@ public class CmdTask extends Task {
 
    @Override
    public void execute() throws MuphinFailureException {
+      getCmdSession();
       // TODO:
       // 1) CMD mit /k starten und offen halten
       // 2) execute greift auf Streams zu um Befehle an die cmd zu geben und Antworten abzurufen
@@ -122,6 +125,17 @@ public class CmdTask extends Task {
          throw new MuphinFailureException(exception,
                   "The task {} was not executed successfully and returned the exit value {}. Response of the executed task is {}",
                   this.command, exitValue, response);
+      }
+   }
+
+   private void getCmdSession() {
+      MuphinSession muphinSession = MuphinSession.getInstance();
+      Optional<CommandLine> optCommandLine = muphinSession.getData(MuphinSession.CMD_SESSION, CommandLine.class);
+      CommandLine commandLine;
+      if (optCommandLine.isPresent()) {
+         commandLine = optCommandLine.get();
+      } else {
+         commandLine = new CommandLine("cmd /k");
       }
    }
 }

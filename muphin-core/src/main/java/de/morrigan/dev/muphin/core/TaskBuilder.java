@@ -10,7 +10,7 @@ public abstract class TaskBuilder<T extends TaskBuilder<T>> {
 
    private List<Task> tasks;
 
-   public TaskBuilder() {
+   protected TaskBuilder() {
       super();
       this.tasks = new ArrayList<>();
    }
