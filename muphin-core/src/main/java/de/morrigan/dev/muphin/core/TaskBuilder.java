@@ -8,6 +8,10 @@ import de.morrigan.dev.muphin.core.tasks.Task;
 
 public abstract class TaskBuilder<T extends TaskBuilder<T>> {
 
+   public class QueryBuilder {
+
+   }
+
    private List<Task> tasks;
 
    protected TaskBuilder() {
@@ -41,4 +45,5 @@ public abstract class TaskBuilder<T extends TaskBuilder<T>> {
    }
 
    protected abstract T getBuilder();
+
 }

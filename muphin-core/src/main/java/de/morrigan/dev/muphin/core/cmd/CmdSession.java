@@ -1,6 +1,5 @@
 package de.morrigan.dev.muphin.core.cmd;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,8 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
@@ -41,24 +38,35 @@ public class CmdSession {
 
    public CmdResponse execute(CommandLine command) {
       LOG.info("command: {}", command);
+      DefaultExecutor executor = new DefaultExecutor();
+      this.output = new ByteArrayOutputStream();
+      this.err = new ByteArrayOutputStream();
+      this.input = new ByteArrayInputStream(new byte[1024]);
+      PumpStreamHandler streamHandler = new PumpStreamHandler(this.output, this.err, this.input);
+      executor.setStreamHandler(streamHandler);
+      DefaultExecuteResultHandler handler = new DefaultExecuteResultHandler();
       Exception exception = null;
       try {
-         PrintWriter writer = new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(this.output)), true);
-         BufferedReader reader = new BufferedReader(new InputStreamReader(this.input));
-         String line = reader.readLine();
-         this.finished = false;
-         while (line != null) {
-            /* Pass the value to command prompt/user input */
-            writer.println(command.toString());
-            LOG.info(line);
-            line = reader.readLine();
-         }
-         this.finished = true;
+         executor.execute(command, handler);
+         handler.waitFor(DEFAULT_TIMEOUT);
       } catch (IOException e) {
          LOG.error(e.getMessage(), e);
          exception = e;
+      } catch (InterruptedException e) {
+         LOG.error(e.getMessage(), e);
+         exception = e;
+         Thread.currentThread().interrupt();
       }
-      return new CmdResponse(0, this.output.toString(), exception);
+      String responseMsg = this.output.toString();
+      LOG.info("responseMsg: {}", responseMsg);
+      if (handler.hasResult()) {
+         if (exception == null) {
+            exception = handler.getException();
+         }
+         return new CmdResponse(handler.getExitValue(), responseMsg, exception);
+      } else {
+         return new CmdResponse(0, responseMsg, exception);
+      }
    }
 
    public void close() {
@@ -78,7 +86,7 @@ public class CmdSession {
    private CmdResponse createRuntimeExec() {
       String[] command = new String[2];
       command[0] = "cmd";
-      command[1] = "/k";
+      command[1] = "/c";
 
       CmdResponse response;
       try {
@@ -115,7 +123,7 @@ public class CmdSession {
       DefaultExecuteResultHandler handler = new DefaultExecuteResultHandler();
       Exception exception = null;
       try {
-         executor.execute(new CommandLine("cmd").addArgument("/k"), handler);
+         executor.execute(new CommandLine("cmd").addArgument("/c"), handler);
          handler.waitFor(DEFAULT_TIMEOUT);
       } catch (IOException e) {
          LOG.error(e.getMessage(), e);
