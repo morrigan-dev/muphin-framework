@@ -8,42 +8,33 @@ import de.morrigan.dev.muphin.core.tasks.Task;
 
 public abstract class TaskBuilder<T extends TaskBuilder<T>> {
 
-   public class QueryBuilder {
+  private List<Task> tasks;
 
-   }
+  protected TaskBuilder() {
+    super();
+    this.tasks = new ArrayList<>();
+  }
 
-   private List<Task> tasks;
+  public T addCustomTask(int position, Task customTask) {
+    this.tasks.add(position, customTask);
+    return getBuilder();
+  }
 
-   protected TaskBuilder() {
-      super();
-      this.tasks = new ArrayList<>();
-   }
+  public T addCustomTask(Task customTask) {
+    this.tasks.add(customTask);
+    return getBuilder();
+  }
 
-   public T gitPull() {
-//      this.tasks.add(new CmdTask("git pull"));
-      return getBuilder();
-   }
+  public void execute() throws MuphinFailureException {
+    for (Task task : this.tasks) {
+      task.execute();
+    }
+  }
 
-   public T addCustomTask(int position, Task customTask) {
-      this.tasks.add(position, customTask);
-      return getBuilder();
-   }
+  protected List<Task> getTasks() {
+    return new ArrayList<>(this.tasks);
+  }
 
-   public T addCustomTask(Task customTask) {
-      this.tasks.add(customTask);
-      return getBuilder();
-   }
-
-   public void execute() throws MuphinFailureException {
-      for (Task task : this.tasks) {
-         task.execute();
-      }
-   }
-
-   protected List<Task> getTasks() {
-      return new ArrayList<>(this.tasks);
-   }
-
-   protected abstract T getBuilder();
+  protected abstract T getBuilder();
 
 }

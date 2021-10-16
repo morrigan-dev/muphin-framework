@@ -18,6 +18,7 @@
 
 	<modules>
 		<module>muphin-core</module>
+		<module>muphin-examples</module>
 	</modules>
 
 	<scm>

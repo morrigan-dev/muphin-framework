@@ -19,7 +19,7 @@ import de.morrigan.dev.muphin.core.workflow.AbstractWorkflow;
  * <pre>
  * &#64;WorkflowTest(MyCustomWorkflow.class)
  * public class MyCustomWorkflowTest {
- *    // add here your test methods with &#64;Phase annotations ...
+ *   // add here your test methods with &#64;Phase annotations ...
  * }
  * </pre>
  *
@@ -27,15 +27,15 @@ import de.morrigan.dev.muphin.core.workflow.AbstractWorkflow;
  * @since 0.0.1
  */
 @Target({
-         ElementType.TYPE
+    ElementType.TYPE
 })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WorkflowTest {
 
-   /**
-    * @return a workflow to that this test class belongs
-    *
-    * @since 0.0.1
-    */
-   Class<? extends AbstractWorkflow> value();
+  /**
+   * @return a workflow to that this test class belongs
+   *
+   * @since 0.0.1
+   */
+  Class<? extends AbstractWorkflow> value();
 }

@@ -1,10 +1,5 @@
 package de.morrigan.dev.muphin.core.phase;
 
-import java.util.Optional;
-
-import de.morrigan.dev.muphin.core.MuphinSession;
-import de.morrigan.dev.muphin.core.cmd.CmdSession;
-
 /**
  * The tear down phase is always the last phase of a workflow and is therefore always executed last.
  * <p>
@@ -17,17 +12,12 @@ import de.morrigan.dev.muphin.core.cmd.CmdSession;
  */
 public class TearDownPhase extends AbstractPhase {
 
-   public TearDownPhase() {
-      super(AbstractPhase.INTERNAL_KIND, TearDownPhase.class.getSimpleName());
-   }
+  public TearDownPhase() {
+    super(AbstractPhase.INTERNAL_KIND, TearDownPhase.class.getSimpleName());
+  }
 
-   @Override
-   public boolean execute() {
-      MuphinSession muphinSession = MuphinSession.getInstance();
-      Optional<CmdSession> optCmdSession = muphinSession.getData(MuphinSession.CMD_SESSION, CmdSession.class);
-      if (optCmdSession.isPresent()) {
-         optCmdSession.get().close();
-      }
-      return true;
-   }
+  @Override
+  public boolean execute() {
+    return true;
+  }
 }

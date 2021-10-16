@@ -7,16 +7,16 @@ import de.morrigan.dev.muphin.core.phase.AbstractPhase;
 
 public class TestPhaseX extends AbstractPhase {
 
-   /** Logger für Debug/Fehlerausgaben */
-   private static final Logger LOG = LoggerFactory.getLogger(TestPhaseX.class);
+  /** Logger für Debug/Fehlerausgaben */
+  private static final Logger LOG = LoggerFactory.getLogger(TestPhaseX.class);
 
-   public TestPhaseX(String data) {
-      super("Test", "Phase X");
-   }
+  public TestPhaseX(String data) {
+    super("Test", "Phase X");
+  }
 
-   @Override
-   public boolean execute() {
-      LOG.info("execute action from phase X");
-      return true;
-   }
+  @Override
+  public boolean execute() {
+    LOG.info("execute action from phase X");
+    return true;
+  }
 }

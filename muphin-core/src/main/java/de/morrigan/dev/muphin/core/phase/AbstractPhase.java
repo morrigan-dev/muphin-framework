@@ -15,29 +15,29 @@ package de.morrigan.dev.muphin.core.phase;
  */
 public abstract class AbstractPhase {
 
-   public static final String INTERNAL_KIND = "InternalPhase";
+  public static final String INTERNAL_KIND = "InternalPhase";
 
-   private final String kind;
-   private final String name;
+  private final String kind;
+  private final String name;
 
-   protected AbstractPhase(String kind, String name) {
-      super();
-      this.kind = kind;
-      this.name = name;
-   }
+  protected AbstractPhase(String kind, String name) {
+    super();
+    this.kind = kind;
+    this.name = name;
+  }
 
-   public String getKind() {
-      return this.kind;
-   }
+  public String getKind() {
+    return this.kind;
+  }
 
-   public String getName() {
-      return this.name;
-   }
+  public String getName() {
+    return this.name;
+  }
 
-   /**
-    * Executes the action that belongs to this phase. Has to be implemented by all subclasses.
-    *
-    * @return {@code true} if the action was executed successful, otherwise {@code false}.
-    */
-   public abstract boolean execute();
+  /**
+   * Executes the action that belongs to this phase. Has to be implemented by all subclasses.
+   *
+   * @return {@code true} if the action was executed successful, otherwise {@code false}.
+   */
+  public abstract boolean execute();
 }

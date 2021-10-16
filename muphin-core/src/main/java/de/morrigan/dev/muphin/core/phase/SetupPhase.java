@@ -12,12 +12,12 @@ package de.morrigan.dev.muphin.core.phase;
  */
 public class SetupPhase extends AbstractPhase {
 
-   public SetupPhase() {
-      super(AbstractPhase.INTERNAL_KIND, SetupPhase.class.getSimpleName());
-   }
+  public SetupPhase() {
+    super(AbstractPhase.INTERNAL_KIND, SetupPhase.class.getSimpleName());
+  }
 
-   @Override
-   public boolean execute() {
-      return true;
-   }
+  @Override
+  public boolean execute() {
+    return true;
+  }
 }

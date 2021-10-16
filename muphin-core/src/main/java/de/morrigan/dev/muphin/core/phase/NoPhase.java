@@ -10,12 +10,12 @@ import de.morrigan.dev.muphin.core.annotation.Phase;
  */
 public class NoPhase extends AbstractPhase {
 
-   public NoPhase() {
-      super(AbstractPhase.INTERNAL_KIND, NoPhase.class.getSimpleName());
-   }
+  public NoPhase() {
+    super(AbstractPhase.INTERNAL_KIND, NoPhase.class.getSimpleName());
+  }
 
-   @Override
-   public boolean execute() {
-      return true;
-   }
+  @Override
+  public boolean execute() {
+    return true;
+  }
 }

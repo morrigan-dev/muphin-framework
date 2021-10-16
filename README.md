@@ -23,11 +23,7 @@
 
 ## Über dieses Projekt
 
-Dieses Framework unterstützt beim Testen von komplexen Prozessen, bei denen Daten schrittweise durch einen 
-vordefinierten und immer gleich ablaufenden Workflow verarbeitet werden. Das Framework erlaubt es beliebige Prozesse in 
-Form von Phasen zu definieren. Anschließend können Sie sich mit einfachen JUnit Tests in eine von Ihnen definierte Phase 
-einklinken und Ihren Tests vor oder nach der definierten Phase laufen lassen.
-So lassen sich komplexe Prozesse einfach und schrittweise testen. 
+Das <b>Mu</b>lti-<b>ph</b>ase-<b>in</b>tegrationtest Framework unterstützt beim Testen von komplexen Prozessen, bei denen Daten schrittweise durch einen vordefinierten und immer gleich ablaufenden Workflow verarbeitet werden. Das Framework erlaubt es beliebige Prozesse in Form von Phasen zu definieren. Anschließend können Sie sich mit einfachen JUnit Tests in eine von Ihnen definierte Phase einklinken und Ihren Tests vor oder nach der definierten Phase laufen lassen. So lassen sich komplexe Prozesse einfach und schrittweise testen. 
 
 ## Lizenzierung
 
@@ -41,3 +37,6 @@ Eine Kopie der Lizenz erhalten Sie unter https://www.apache.org/licenses/LICENSE
 Sofern nicht durch anwendbares Recht gefordert oder schriftlich vereinbart, wird jede unter der Lizenz bereitgestellte 
 Software „OHNE MÄNGELGEWÄHR“ UND OHNE AUSDRÜCKLICHE ODER STILLSCHWEIGENDE GARANTIE JEGLICHER ART bereitgestellt. 
 Die genauen Angaben zu Genehmigungen und Einschränkungen unter der Lizenz finden Sie in der [LIZENZ](LICENSE).
+
+
+<div>Icons erstellt von <a href="https://www.flaticon.com/de/autoren/pause08" title="Pause08">Pause08</a> von <a href="https://www.flaticon.com/de/" title="Flaticon">www.flaticon.com</a></div>
