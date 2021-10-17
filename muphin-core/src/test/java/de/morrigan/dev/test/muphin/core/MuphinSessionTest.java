@@ -18,17 +18,12 @@ import org.apache.logging.log4j.core.util.ReflectionUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.morrigan.dev.muphin.core.MuphinSession;
 import de.morrigan.dev.test.muphin.helper.TestPhaseA;
 import de.morrigan.dev.test.muphin.helper.WorkflowA;
 
 public class MuphinSessionTest {
-
-  /** Logger für Debug/Fehlerausgaben */
-  private static final Logger LOG = LoggerFactory.getLogger(MuphinSessionTest.class);
 
   private MuphinSession sut;
 
@@ -74,13 +69,15 @@ public class MuphinSessionTest {
   }
 
   @Test
-  public void testClear() {
+  public void testClear() throws NoSuchFieldException, SecurityException {
     String testKey = "TestKey";
     TestPhaseA testPhaseA = new TestPhaseA();
     WorkflowA workflowA = new WorkflowA();
     this.sut.putData(testKey, "TestValue");
-    this.sut.setCurrentPhase(testPhaseA);
-    this.sut.setCurrentWorkflow(workflowA);
+    ReflectionUtil
+        .setFieldValue(this.sut.getClass().getDeclaredField("currentPhase"), this.sut, testPhaseA);
+    ReflectionUtil
+        .setFieldValue(this.sut.getClass().getDeclaredField("currentWorkflow"), this.sut, workflowA);
     Map<String, Object> dataCache = getDataCache(this.sut);
     assertThat(dataCache, is(notNullValue()));
     assertThat(dataCache.size(), is(equalTo(1)));

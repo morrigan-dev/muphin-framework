@@ -12,6 +12,11 @@ package de.morrigan.dev.muphin.core.phase;
  */
 public class SetupPhase extends AbstractPhase {
 
+  /**
+   * Create a new instance of this phase.
+   *
+   * @since 0.0.1
+   */
   public SetupPhase() {
     super(AbstractPhase.INTERNAL_KIND, SetupPhase.class.getSimpleName());
   }

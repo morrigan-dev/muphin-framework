@@ -42,6 +42,12 @@ public class GenericCmdQueryBuilderTest {
   }
 
   @Test
+  public void testWithSeparator() {
+    TestCmdQueryBuilder builder = this.sut.withSeparator("\n");
+    assertThat(builder, is(equalTo(this.sut)));
+  }
+
+  @Test
   public void testGitPull() {
     TestCmdQueryBuilder builder = this.sut.gitPull();
     assertThat(builder, is(equalTo(this.sut)));

@@ -36,6 +36,15 @@ public class DefaultCmdQueryBuilderTest {
   }
 
   @Test
+  public void testWithSeparator() {
+    String command = this.sut.withSeparator("\n")
+        .addCustomCommand("call A")
+        .addCustomCommand("call B")
+        .getCommand();
+    assertThat(command, is(equalTo("call A\ncallB")));
+  }
+
+  @Test
   public void testGitPull() {
     this.sut.gitPull();
     StringBuilder cmdQuery = getCmdQuery(this.sut);

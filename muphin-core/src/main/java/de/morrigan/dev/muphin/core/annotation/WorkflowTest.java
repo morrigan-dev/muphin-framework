@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import de.morrigan.dev.muphin.core.runner.WorkflowRunner;
+import de.morrigan.dev.muphin.core.WorkflowRunner;
 import de.morrigan.dev.muphin.core.workflow.AbstractWorkflow;
 
 /**
@@ -34,7 +34,6 @@ public @interface WorkflowTest {
 
   /**
    * @return a workflow to that this test class belongs
-   *
    * @since 0.0.1
    */
   Class<? extends AbstractWorkflow> value();

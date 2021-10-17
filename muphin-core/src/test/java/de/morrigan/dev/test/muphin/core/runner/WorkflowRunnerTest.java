@@ -22,7 +22,7 @@ import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.TestClass;
 
-import de.morrigan.dev.muphin.core.runner.WorkflowRunner;
+import de.morrigan.dev.muphin.core.WorkflowRunner;
 import de.morrigan.dev.test.muphin.helper.MuphinTestSuite;
 import de.morrigan.dev.test.muphin.helper.TestClassA1;
 

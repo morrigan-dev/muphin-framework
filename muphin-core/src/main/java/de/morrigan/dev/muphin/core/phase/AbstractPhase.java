@@ -20,16 +20,31 @@ public abstract class AbstractPhase {
   private final String kind;
   private final String name;
 
+  /**
+   * Creates a new instance of this phase and sets the kind and the name of this phase.
+   *
+   * @param kind a kind that groups similar phases together
+   * @param name a unique name for this phase
+   * @since 0.0.1
+   */
   protected AbstractPhase(String kind, String name) {
     super();
     this.kind = kind;
     this.name = name;
   }
 
+  /**
+   * @return a kin that groups similar phases together
+   * @since 0.0.1
+   */
   public String getKind() {
     return this.kind;
   }
 
+  /**
+   * @return a unique name for this phase
+   * @since 0.0.1
+   */
   public String getName() {
     return this.name;
   }
@@ -38,6 +53,7 @@ public abstract class AbstractPhase {
    * Executes the action that belongs to this phase. Has to be implemented by all subclasses.
    *
    * @return {@code true} if the action was executed successful, otherwise {@code false}.
+   * @since 0.0.1
    */
   public abstract boolean execute();
 }

@@ -10,6 +10,11 @@ import de.morrigan.dev.muphin.core.annotation.Phase;
  */
 public class NoPhase extends AbstractPhase {
 
+  /**
+   * Creates a new instance of this phase.
+   *
+   * @since 0.0.1
+   */
   public NoPhase() {
     super(AbstractPhase.INTERNAL_KIND, NoPhase.class.getSimpleName());
   }

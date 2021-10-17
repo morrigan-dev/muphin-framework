@@ -1,10 +1,9 @@
-package de.morrigan.dev.muphin.core;
+package de.morrigan.dev.muphin.core.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.morrigan.dev.muphin.core.exception.MuphinFailureException;
-import de.morrigan.dev.muphin.core.tasks.Task;
 
 public abstract class TaskBuilder<T extends TaskBuilder<T>> {
 

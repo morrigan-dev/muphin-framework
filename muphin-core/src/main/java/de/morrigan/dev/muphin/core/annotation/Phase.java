@@ -36,14 +36,12 @@ public @interface Phase {
 
   /**
    * @return a phase to which this test method is previously executed
-   *
    * @since 0.0.01
    */
   Class<? extends AbstractPhase> beforePhase() default NoPhase.class;
 
   /**
    * @return a phase to which this test method is executed afterwards
-   *
    * @since 0.0.1
    */
   Class<? extends AbstractPhase> afterPhase() default NoPhase.class;

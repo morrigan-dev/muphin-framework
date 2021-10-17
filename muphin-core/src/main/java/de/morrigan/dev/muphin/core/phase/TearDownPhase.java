@@ -12,6 +12,11 @@ package de.morrigan.dev.muphin.core.phase;
  */
 public class TearDownPhase extends AbstractPhase {
 
+  /**
+   * Creates a new instance of this phase.
+   *
+   * @since 0.0.1
+   */
   public TearDownPhase() {
     super(AbstractPhase.INTERNAL_KIND, TearDownPhase.class.getSimpleName());
   }

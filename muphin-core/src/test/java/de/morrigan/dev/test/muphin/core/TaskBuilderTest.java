@@ -14,9 +14,9 @@ import org.apache.logging.log4j.core.util.ReflectionUtil;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.morrigan.dev.muphin.core.TaskBuilder;
 import de.morrigan.dev.muphin.core.exception.MuphinFailureException;
 import de.morrigan.dev.muphin.core.tasks.Task;
+import de.morrigan.dev.muphin.core.tasks.TaskBuilder;
 
 public class TaskBuilderTest {
 

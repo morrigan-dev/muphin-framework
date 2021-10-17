@@ -1,4 +1,4 @@
-package de.morrigan.dev.muphin.core.runner;
+package de.morrigan.dev.muphin.core;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -37,8 +37,6 @@ import org.reflections.ReflectionsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.morrigan.dev.muphin.core.InstanceManager;
-import de.morrigan.dev.muphin.core.MuphinSession;
 import de.morrigan.dev.muphin.core.annotation.Phase;
 import de.morrigan.dev.muphin.core.annotation.WorkflowTest;
 import de.morrigan.dev.muphin.core.phase.AbstractPhase;
