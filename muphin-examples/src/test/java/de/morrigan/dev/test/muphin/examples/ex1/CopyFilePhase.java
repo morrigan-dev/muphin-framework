@@ -1,9 +1,8 @@
 package de.morrigan.dev.test.muphin.examples.ex1;
 
 import de.morrigan.dev.muphin.core.phase.AbstractPhase;
-import de.morrigan.dev.test.muphin.examples.ex1.CopyFilePhase.CopyFileData;
 
-public class CopyFilePhase extends AbstractPhase<CopyFileData> {
+public class CopyFilePhase extends AbstractPhase {
 
   public class CopyFileData {
     private final String templateFilePath;
@@ -25,12 +24,11 @@ public class CopyFilePhase extends AbstractPhase<CopyFileData> {
   }
 
   protected CopyFilePhase() {
-    super("Copy file");
+    super("Test", "Copy file");
   }
 
   @Override
-  protected boolean execute(CopyFileData data) {
-    // TODO Auto-generated method stub
+  public boolean execute() {
     return false;
   }
 
