@@ -531,29 +531,16 @@ public class WorkflowRunner extends Runner implements Filterable {
   private void printMuphin() {
     LOG.info("");
     LOG.info("        ▟█████▙╗                                               ");
-    LOG.info("     ▟█▛╝░░░░░▜█▙╗                                            ");
-    LOG.info("   ▟█╝░░░░░░░░░░█▙                             ‗     ‗       ");
-    LOG.info("  ▟█╝░░░░░░░░░░░░█▙╗                          ║ ║   (‗)      ");
-    LOG.info(" ██╝░░░░░░░░░░░░░░░██╗    ‗ ‗‗ ‗‗‗  ‗   ‗ ‗ ‗‗ ║ ║‗‗  ‗ ‗ ‗‗  ");
+    LOG.info("     ▟█▛╝░●░░░░▜█▙╗                                            ");
+    LOG.info("   ▟█╝░●░░░░░░●░░░█▙                             ‗     ‗       ");
+    LOG.info("  ▟█╝░░░░░●░░░░░●░░█▙╗                          ║ ║   (‗)      ");
+    LOG.info(" ██╝░●░░░░░░░░░░░░░░██╗    ‗ ‗‗ ‗‗‗  ‗   ‗ ‗ ‗‗ ║ ║‗‗  ‗ ‗ ‗‗  ");
     LOG.info(" ╚█▙▃▞║▚▃▞▚▃▞▚▃▞║▚▃▟▛╔╝   ║ '‗ ` ‗ ⑊║ ║ ║ ║ '‗ ⑊║ '‗ ⑊║ ║ '‗ ⑊ ");
     LOG.info("   ╚█░░║░░░║░░░║░░█╔╝     ║ ║ ║ ║ ║ ║ ║‗║ ║ ║‗) ║ ║ ║ ║ ║ ║ ║ ║");
     LOG.info("    ╚█░░║░░║░░║░░█╔╝      ║‗║ ║‗║ ║‗║⑊‗‗,‗║ .‗‗ ⃫║‗║ ║‗║‗║‗║ ║‗║");
     LOG.info("     ╚███████████╔╝                       ║‗║                  ");
     LOG.info("      ╚══════════╝  Simplify your process and workflow testing ");
-    LOG.info("▕ ▏");
-
     LOG.info("");
-    LOG.info("        ▟█████▙╗                                               ");
-    LOG.info("     ▟█▛╝░░░░░▜█▙╗                                            ");
-    LOG.info("   ▟█╝░░░░░░░░░░█▙                             ‗     ‗       ");
-    LOG.info("  ▟█╝░░░░░░░░░░░░█▙╗                          ║ ║   (‗)      ");
-    LOG.info(" ██╝░░░░░░░░░░░░░░░██╗    ‗ ‗‗ ‗‗‗  ‗   ‗ ‗ ‗‗ ║ ║‗‗  ‗ ‗ ‗‗  ");
-    LOG.info(" ╚█▙▃▞║▚▃▞▚▃▞▚▃▞║▚▃▟▛╔╝   ║ '‗ ` ‗ ⑊║ ║ ║ ║ '‗ ⑊║ '‗ ⑊║ ║ '‗ ⑊ ");
-    LOG.info("   ╚█░░║░░░║░░░║░░█╔╝     ║ ║ ║ ║ ║ ║ ║‗║ ║ ║‗) ║ ║ ║ ║ ║ ║ ║ ║");
-    LOG.info("    ╚█░░║░░║░░║░░█╔╝      ║‗║ ║‗║ ║‗║⑊‗‗,‗║ .‗‗ ⃫║‗║ ║‗║‗║‗║ ║‗║");
-    LOG.info("     ╚███████████╔╝                       ║‗║                  ");
-    LOG.info("      ╚══════════╝  Simplify your process and workflow testing ");
-    LOG.info("▕ ▏");
   }
 
   private void printWorkflowHeader(AbstractWorkflow workflow) {

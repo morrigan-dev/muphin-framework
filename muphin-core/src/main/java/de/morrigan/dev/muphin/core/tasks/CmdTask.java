@@ -28,7 +28,7 @@ public class CmdTask extends Task {
 
   public static final boolean verifySuccess(CmdResponse responseData, String... messages) {
     boolean exitSuccessfully = CmdTask.SUCCESS_EXIT.verify(responseData);
-    boolean expectedMsg = StringUtils.containsAny(responseData.getMessage(), messages);
+    boolean expectedMsg = messages.length == 0 ? true : StringUtils.containsAny(responseData.getMessage(), messages);
     return exitSuccessfully && expectedMsg;
   }
 
@@ -37,14 +37,11 @@ public class CmdTask extends Task {
   }
 
   public static final boolean verifyMessageContainsAll(CmdResponse responseData, String... messages) {
-    boolean result = false;
-    if (messages != null) {
-      result = true;
-      for (String msg : messages) {
-        result &= StringUtils.contains(responseData.getMessage(), msg);
-        if (!result) {
-          break;
-        }
+    boolean result = true;
+    for (String msg : messages) {
+      result &= StringUtils.contains(responseData.getMessage(), msg);
+      if (!result) {
+        break;
       }
     }
     return result;
@@ -52,7 +49,7 @@ public class CmdTask extends Task {
 
   public static final boolean verifyMessageNotContains(CmdResponse responseData, String... messages) {
     boolean result = false;
-    if (messages != null) {
+    if (messages.length > 0) {
       result = true;
       for (String msg : messages) {
         result &= !StringUtils.contains(responseData.getMessage(), msg);
@@ -90,10 +87,8 @@ public class CmdTask extends Task {
   public void execute() throws MuphinFailureException {
     CmdResponse cmdResponse = executeCommand(CommandLine.parse(this.command));
     boolean success = true;
-    if (this.verifications != null) {
-      for (Verification<CmdResponse> verification : this.verifications) {
-        success &= verification.verify(cmdResponse);
-      }
+    for (Verification<CmdResponse> verification : this.verifications) {
+      success &= verification.verify(cmdResponse);
     }
     if (!success) {
       throw new MuphinFailureException(cmdResponse.getException(),
@@ -110,7 +105,7 @@ public class CmdTask extends Task {
     ByteArrayInputStream input = new ByteArrayInputStream(new byte[1024]);
     PumpStreamHandler streamHandler = new PumpStreamHandler(output, err, input);
     executor.setStreamHandler(streamHandler);
-    DefaultExecuteResultHandler handler = new DefaultExecuteResultHandler();
+    DefaultExecuteResultHandler handler = getExecuteResultHandler();
     Exception exception = null;
     try {
       executor.execute(commandLine, handler);
@@ -126,12 +121,16 @@ public class CmdTask extends Task {
       Thread.currentThread().interrupt();
     }
     String responseMsg = output.toString();
+    int exitValue = handler.getExitValue();
     LOG.info("responseMsg: {}", responseMsg);
     if (handler.hasResult()) {
       if (exception == null) {
         exception = handler.getException();
+      } else {
+        exitValue = -1;
+        responseMsg = exception.getMessage();
       }
-      return new CmdResponse(handler.getExitValue(), responseMsg, exception);
+      return new CmdResponse(exitValue, responseMsg, exception);
     } else {
       return new CmdResponse(0, responseMsg, exception);
     }
@@ -139,5 +138,9 @@ public class CmdTask extends Task {
 
   protected DefaultExecutor getExecutor() {
     return new DefaultExecutor();
+  }
+
+  protected DefaultExecuteResultHandler getExecuteResultHandler() {
+    return new DefaultExecuteResultHandler();
   }
 }

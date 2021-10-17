@@ -60,6 +60,7 @@ public class DefaultCmdQueryBuilderTest {
     assertThat(cmdQuery.toString(), is(equalTo("testCommand1 && testCommand2")));
   }
 
+  @Test
   public void testGetCommand() {
     this.sut.addCustomCommand("testCommand1");
     this.sut.addCustomCommand("testCommand2");

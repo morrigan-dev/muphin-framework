@@ -3,26 +3,38 @@ package de.morrigan.dev.test.muphin.task;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
 import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
-import org.apache.commons.exec.ExecuteResultHandler;
 import org.apache.logging.log4j.core.util.ReflectionUtil;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import de.morrigan.dev.muphin.core.cmd.CmdResponse;
 import de.morrigan.dev.muphin.core.exception.MuphinFailureException;
 import de.morrigan.dev.muphin.core.tasks.CmdTask;
 import de.morrigan.dev.muphin.core.tasks.Task.Verification;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CmdTaskTest {
 
   private class CmdTaskMock extends CmdTask {
@@ -39,21 +51,25 @@ public class CmdTaskTest {
 
     @Override
     protected DefaultExecutor getExecutor() {
-      return new DefaultExecutor() {
-        @Override
-        public void execute(CommandLine command, ExecuteResultHandler handler) throws ExecuteException, IOException {
-          CmdTaskTest.this.executed = true;
-          handler.onProcessComplete(0);
-        }
-      };
+      return CmdTaskTest.this.executorMock;
+    }
+
+    @Override
+    protected DefaultExecuteResultHandler getExecuteResultHandler() {
+      return CmdTaskTest.this.handlerMock;
     }
   }
 
-  private boolean executed;
+  @Mock
+  private DefaultExecuteResultHandler handlerMock;
+
+  @Mock
+  private DefaultExecutor executorMock;
 
   @Before
-  public void setup() {
-    this.executed = false;
+  public void setup() throws ExecuteException, IOException {
+    when(this.handlerMock.hasResult()).thenReturn(Boolean.TRUE);
+    doNothing().when(this.executorMock).execute(Mockito.any(CommandLine.class), Mockito.eq(this.handlerMock));
   }
 
   @Test
@@ -99,9 +115,39 @@ public class CmdTaskTest {
   }
 
   @Test
-  public void testSuccessAllVerificationWithexceptionValueSet() {
+  public void testSuccessAllVerificationWithExceptionValueSet() {
     Verification<CmdResponse> sut = CmdTask.SUCCESS_ALL;
     boolean result = sut.verify(new CmdResponse(0, null, new NullPointerException()));
+    assertFalse(result);
+  }
+
+  @Test
+  public void testVerifySuccessWithExitValueEqualToZeroWithoutMsgs() {
+    boolean result = CmdTask.verifySuccess(new CmdResponse(0, null, null));
+    assertTrue(result);
+  }
+
+  @Test
+  public void testVerifySuccessWithExitValueEqualToZeroWithMsg() {
+    boolean result = CmdTask.verifySuccess(new CmdResponse(0, "Hello World!", null), "Hello");
+    assertTrue(result);
+  }
+
+  @Test
+  public void testVerifySuccessWithExitValueEqualToZeroWithNotContainingMsg() {
+    boolean result = CmdTask.verifySuccess(new CmdResponse(0, "Hello World!", null), "Tom");
+    assertFalse(result);
+  }
+
+  @Test
+  public void testVerifySuccessWithExitValueEqualToOneWithoutMsgs() {
+    boolean result = CmdTask.verifySuccess(new CmdResponse(1, "Hello World!", null));
+    assertFalse(result);
+  }
+
+  @Test
+  public void testVerifySuccessWithExitValueEqualToOneWithNotContainingMsg() {
+    boolean result = CmdTask.verifySuccess(new CmdResponse(1, "Hello World!", null), "Tom");
     assertFalse(result);
   }
 
@@ -124,6 +170,12 @@ public class CmdTaskTest {
   }
 
   @Test
+  public void testVerifyMessageContainsAllReturnsTrueWithoutMegs() {
+    boolean result = CmdTask.verifyMessageContainsAll(new CmdResponse(0, "Hello World!", null));
+    assertTrue(result);
+  }
+
+  @Test
   public void testVerifyMessageContainsAllReturnsFalse() {
     boolean result = CmdTask.verifyMessageContainsAll(new CmdResponse(0, "Hello World!", null), "Hello", "Tom");
     assertFalse(result);
@@ -138,6 +190,12 @@ public class CmdTaskTest {
   @Test
   public void testVerifyMessageNotContainsReturnsFalse() {
     boolean result = CmdTask.verifyMessageNotContains(new CmdResponse(0, "Hello World!", null), "Hello");
+    assertFalse(result);
+  }
+
+  @Test
+  public void testVerifyMessageNotContainsReturnsFalseWithoutMsgs() {
+    boolean result = CmdTask.verifyMessageNotContains(new CmdResponse(0, "Hello World!", null));
     assertFalse(result);
   }
 
@@ -171,17 +229,62 @@ public class CmdTaskTest {
   }
 
   @Test
-  public void testExecuteWithoutValidations() throws MuphinFailureException {
+  public void testExecuteWithoutValidations() throws MuphinFailureException, ExecuteException, IOException {
     CmdTask task = new CmdTaskMock("cmd /c", "dir");
     task.execute();
-    assertTrue(this.executed);
+
+    verify(this.handlerMock, atLeastOnce()).hasResult();
+    verify(this.executorMock, times(1)).execute(Mockito.any(CommandLine.class), Mockito.eq(this.handlerMock));
   }
 
   @Test
-  public void testExecuteWithSuccessValidation() throws MuphinFailureException {
+  public void testExecuteWithSuccessValidation() throws MuphinFailureException, ExecuteException, IOException {
+    CmdTask task = new CmdTaskMock("cmd /c", "dir", responseData -> true);
+    long startTime = System.currentTimeMillis();
+    task.execute();
+    long endTime = System.currentTimeMillis();
+
+    assertThat(endTime - startTime, is(greaterThanOrEqualTo(1000L)));
+    verify(this.handlerMock, atLeastOnce()).hasResult();
+    verify(this.executorMock, times(1)).execute(Mockito.any(CommandLine.class), Mockito.eq(this.handlerMock));
+  }
+
+  @Test
+  public void testExecuteWithDelayedResponse() throws MuphinFailureException, ExecuteException, IOException {
+    when(this.handlerMock.hasResult()).thenReturn(Boolean.FALSE, Boolean.TRUE);
+
     CmdTask task = new CmdTaskMock("cmd /c", "dir", responseData -> true);
     task.execute();
-    assertTrue(this.executed);
+
+    verify(this.handlerMock, atLeastOnce()).hasResult();
+    verify(this.executorMock, times(1)).execute(Mockito.any(CommandLine.class), Mockito.eq(this.handlerMock));
+  }
+
+  @Test
+  public void testExecuteWithIOException() throws MuphinFailureException, ExecuteException, IOException {
+    IOException ioe = new IOException("TestMsg");
+    doThrow(ioe).when(this.executorMock).execute(Mockito.any(CommandLine.class), Mockito.eq(this.handlerMock));
+
+    CmdTask task = new CmdTaskMock("cmd /c", "dir", CmdTask.SUCCESS_ALL);
+    MuphinFailureException exception = assertThrows(MuphinFailureException.class, () -> task.execute());
+    assertThat(exception.getMessage(), containsString("TestMsg"));
+    assertThat(exception.getCause(), is(equalTo(ioe)));
+
+    verify(this.handlerMock, atLeastOnce()).hasResult();
+    verify(this.executorMock, times(1)).execute(Mockito.any(CommandLine.class), Mockito.eq(this.handlerMock));
+  }
+
+  @Test
+  public void testExecuteWithInterruptedException() throws MuphinFailureException, InterruptedException {
+    InterruptedException ie = new InterruptedException("TestMsg");
+    when(this.handlerMock.hasResult()).thenReturn(Boolean.FALSE, Boolean.TRUE);
+    doThrow(ie).when(this.handlerMock).waitFor(Mockito.anyLong());
+
+    CmdTask task = new CmdTaskMock("cmd /c", "dir", CmdTask.SUCCESS_ALL);
+    MuphinFailureException exception = assertThrows(MuphinFailureException.class, () -> task.execute());
+    assertThat(exception.getMessage(), containsString("TestMsg"));
+    assertThat(exception.getCause(), is(equalTo(ie)));
+    assertThat(Thread.currentThread().isInterrupted(), is(equalTo(true)));
   }
 
   @Test

@@ -53,6 +53,12 @@ public class GenericCmdQueryBuilderTest {
     assertThat(builder, is(equalTo(this.sut)));
   }
 
+  @Test
+  public void testGetCommand() {
+    TestCmdQueryBuilder builder = this.sut.addCustomCommand("testCommnad");
+    assertThat(builder.getCommand(), is(equalTo("testCommand")));
+  }
+
   private DefaultCmdQueryBuilder getDelegate(TestCmdQueryBuilder sut) {
     try {
       return (DefaultCmdQueryBuilder) ReflectionUtil.getFieldValue(
