@@ -1,5 +1,6 @@
 package de.morrigan.dev.test.muphin.task;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -8,18 +9,22 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
+import org.apache.commons.exec.ExecuteResultHandler;
 import org.apache.logging.log4j.core.util.ReflectionUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,8 +35,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import de.morrigan.dev.muphin.core.cmd.CmdResponse;
 import de.morrigan.dev.muphin.core.exception.MuphinFailureException;
-import de.morrigan.dev.muphin.core.tasks.CmdTask;
-import de.morrigan.dev.muphin.core.tasks.Task.Verification;
+import de.morrigan.dev.muphin.core.task.CmdTask;
+import de.morrigan.dev.muphin.core.task.Task.Verification;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CmdTaskTest {
@@ -44,8 +49,12 @@ public class CmdTaskTest {
     }
 
     @SafeVarargs
-    public CmdTaskMock(String executor, boolean asynchron, String command, Verification<CmdResponse>... verifications) {
-      super(executor, asynchron, command, verifications);
+    public CmdTaskMock(String executor, String command, long timeout, Verification<CmdResponse>... verifications) {
+      super(executor, command, timeout, verifications);
+    }
+
+    public CmdTaskMock(String executor, String command) {
+      super(executor, command);
     }
 
     @Override
@@ -200,16 +209,15 @@ public class CmdTaskTest {
 
   @Test
   public void testConstructionWithoutVerification() {
-    CmdTask task = new CmdTask("cmd /c", "dir");
-    String command = getCommand(task);
-    assertThat(command, is(equalTo("cmd /c dir")));
+    CmdTask task = new CmdTask("cmd /c", "dir", 1000);
+    assertThat(getCommand(task), is(equalTo("cmd /c dir")));
     assertThat(getVerifications(task).length, is(equalTo(0)));
     assertThat(getAsynchron(task), is(equalTo(false)));
   }
 
   @Test
   public void testConstructionWithVerification() {
-    CmdTask task = new CmdTask("cmd /c", "dir",
+    CmdTask task = new CmdTask("cmd /c", "dir", 1000,
         responseData -> false,
         responseData -> true);
     assertThat(getCommand(task), is(equalTo("cmd /c dir")));
@@ -219,17 +227,15 @@ public class CmdTaskTest {
 
   @Test
   public void testConstructionWithAsynchron() {
-    CmdTask task = new CmdTask("cmd /c", true, "dir",
-        responseData -> false,
-        responseData -> true);
+    CmdTask task = new CmdTask("cmd /c", "dir");
     assertThat(getCommand(task), is(equalTo("cmd /c dir")));
-    assertThat(getVerifications(task).length, is(equalTo(2)));
+    assertThat(getVerifications(task).length, is(equalTo(1)));
     assertThat(getAsynchron(task), is(equalTo(true)));
   }
 
   @Test
   public void testExecuteWithoutValidations() throws MuphinFailureException, ExecuteException, IOException {
-    CmdTask task = new CmdTaskMock("cmd /c", "dir");
+    CmdTask task = new CmdTaskMock("cmd /c", "dir", 1000);
     task.execute();
 
     verify(this.handlerMock, atLeastOnce()).hasResult();
@@ -250,14 +256,51 @@ public class CmdTaskTest {
   }
 
   @Test
-  public void testExecuteWithDelayedResponse() throws MuphinFailureException, ExecuteException, IOException {
+  public void testExecuteWithDelayedResponseInSynchronyMode()
+      throws MuphinFailureException, ExecuteException, IOException, InterruptedException {
     when(this.handlerMock.hasResult()).thenReturn(Boolean.FALSE, Boolean.TRUE);
+    doAnswer(invocation -> {
+      await().atLeast(100, TimeUnit.MICROSECONDS);
+      return null;
+    }).when(this.executorMock).execute(Mockito.any(CommandLine.class), Mockito.any(ExecuteResultHandler.class));
 
     CmdTask task = new CmdTaskMock("cmd /c", "dir", responseData -> true);
     task.execute();
 
     verify(this.handlerMock, atLeastOnce()).hasResult();
+    verify(this.handlerMock, atLeastOnce()).waitFor(Mockito.anyLong());
     verify(this.executorMock, times(1)).execute(Mockito.any(CommandLine.class), Mockito.eq(this.handlerMock));
+  }
+
+  @Test
+  public void testExecuteWithDelayedResponseInAsynchronyMode()
+      throws MuphinFailureException, ExecuteException, IOException, InterruptedException {
+    when(this.handlerMock.hasResult()).thenReturn(Boolean.FALSE);
+    doAnswer(invocation -> {
+      await().atLeast(100, TimeUnit.MICROSECONDS);
+      return null;
+    }).when(this.executorMock).execute(Mockito.any(CommandLine.class), Mockito.any(ExecuteResultHandler.class));
+
+    CmdTask task = new CmdTaskMock("cmd /c", "dir");
+    task.execute();
+
+    verify(this.handlerMock, atLeastOnce()).hasResult();
+    verify(this.handlerMock, never()).waitFor(Mockito.anyLong());
+    verify(this.executorMock, times(1)).execute(Mockito.any(CommandLine.class), Mockito.eq(this.handlerMock));
+  }
+
+  @Test
+  public void testExecuteWithTimeout()
+      throws MuphinFailureException, ExecuteException, IOException, InterruptedException {
+    when(this.handlerMock.hasResult()).thenReturn(Boolean.FALSE);
+    doNothing().when(this.handlerMock).waitFor(Mockito.anyLong());
+    doNothing().when(this.executorMock).execute(Mockito.any(CommandLine.class),
+        Mockito.any(ExecuteResultHandler.class));
+
+    CmdTask task = new CmdTaskMock("cmd /c", "dir", 50, responseData -> true);
+    MuphinFailureException exception = assertThrows(MuphinFailureException.class, () -> task.execute());
+    assertThat(exception.getMessage(), containsString("cmd /c dir"));
+    assertThat(exception.getMessage(), containsString("does not finish execution within 0.05 seconds"));
   }
 
   @Test

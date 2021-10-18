@@ -15,4 +15,10 @@ public class NoPhaseTest {
     NoPhase sut = new NoPhase();
     assertThat(sut.getName(), is(equalTo(NoPhase.class.getSimpleName())));
   }
+
+  @Test
+  public void testExecute() {
+    NoPhase sut = new NoPhase();
+    assertThat(sut.execute(), is(equalTo(true)));
+  }
 }

@@ -1,4 +1,4 @@
-package de.morrigan.dev.test.muphin.core.runner;
+package de.morrigan.dev.test.muphin.core;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -256,6 +256,30 @@ public class WorkflowRunnerTest {
         @Override
         public boolean shouldRun(Description description) {
           return false;
+        }
+
+        @Override
+        public String describe() {
+          return "";
+        }
+      };
+      this.sut.filter(filter);
+    });
+  }
+
+  @Test
+  public void testFilterWithNoTestsRemainExceptionDuringApply() throws NoTestsRemainException {
+    assertThrows(NoTestsRemainException.class, () -> {
+      Filter filter = new Filter() {
+
+        @Override
+        public void apply(Object child) throws NoTestsRemainException {
+          throw new NoTestsRemainException();
+        }
+
+        @Override
+        public boolean shouldRun(Description description) {
+          return true;
         }
 
         @Override
