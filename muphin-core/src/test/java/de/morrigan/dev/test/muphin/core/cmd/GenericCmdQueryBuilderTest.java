@@ -55,13 +55,13 @@ public class GenericCmdQueryBuilderTest {
 
   @Test
   public void testAddCustomCommand() {
-    TestCmdQueryBuilder builder = this.sut.addCustomCommand("testCommnad");
+    TestCmdQueryBuilder builder = this.sut.addCustomCommand("testCommand");
     assertThat(builder, is(equalTo(this.sut)));
   }
 
   @Test
   public void testGetCommand() {
-    TestCmdQueryBuilder builder = this.sut.addCustomCommand("testCommnad");
+    TestCmdQueryBuilder builder = this.sut.addCustomCommand("testCommand");
     assertThat(builder.getCommand(), is(equalTo("testCommand")));
   }
 

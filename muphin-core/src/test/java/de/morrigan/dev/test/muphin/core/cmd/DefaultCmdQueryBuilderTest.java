@@ -41,7 +41,7 @@ public class DefaultCmdQueryBuilderTest {
         .addCustomCommand("call A")
         .addCustomCommand("call B")
         .getCommand();
-    assertThat(command, is(equalTo("call A\ncallB")));
+    assertThat(command, is(equalTo("call A\ncall B")));
   }
 
   @Test
