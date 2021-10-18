@@ -3,7 +3,6 @@ package de.morrigan.dev.test.muphin.task;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
@@ -238,14 +237,15 @@ public class CmdTaskTest {
   }
 
   @Test
-  public void testExecuteWithSuccessValidation() throws MuphinFailureException, ExecuteException, IOException {
+  public void testExecuteWithSuccessValidation()
+      throws MuphinFailureException, ExecuteException, IOException, InterruptedException {
+    doNothing().when(this.handlerMock).waitFor(Mockito.anyLong());
+    when(this.handlerMock.hasResult()).thenReturn(Boolean.FALSE, Boolean.TRUE);
     CmdTask task = new CmdTaskMock("cmd /c", "dir", responseData -> true);
-    long startTime = System.currentTimeMillis();
     task.execute();
-    long endTime = System.currentTimeMillis();
 
-    assertThat(endTime - startTime, is(greaterThanOrEqualTo(1000L)));
     verify(this.handlerMock, atLeastOnce()).hasResult();
+    verify(this.handlerMock, atLeastOnce()).waitFor(Mockito.anyLong());
     verify(this.executorMock, times(1)).execute(Mockito.any(CommandLine.class), Mockito.eq(this.handlerMock));
   }
 
