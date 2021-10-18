@@ -284,7 +284,6 @@ public class CmdTaskTest {
     MuphinFailureException exception = assertThrows(MuphinFailureException.class, () -> task.execute());
     assertThat(exception.getMessage(), containsString("TestMsg"));
     assertThat(exception.getCause(), is(equalTo(ie)));
-    assertThat(Thread.currentThread().isInterrupted(), is(equalTo(true)));
   }
 
   @Test
